@@ -44,8 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mathematics\Cplx.cs" />
+    <Compile Include="Mathematics\Poly.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\FractalRender.cs" />
+    <Compile Include="Utils\ArgumentParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
