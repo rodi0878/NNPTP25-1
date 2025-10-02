@@ -80,13 +80,13 @@ namespace NNPTPZ1
                     Cplx ox = new Cplx()
                     {
                         Re = x,
-                        Imaginari = (float)(y)
+                        Im = (float)(y)
                     };
 
                     if (ox.Re == 0)
                         ox.Re = 0.0001;
-                    if (ox.Imaginari == 0)
-                        ox.Imaginari = 0.0001f;
+                    if (ox.Im == 0)
+                        ox.Im = 0.0001f;
 
                     //Console.WriteLine(ox);
 
@@ -98,7 +98,7 @@ namespace NNPTPZ1
                         ox = ox.Subtract(diff);
 
                         //Console.WriteLine($"{q} {ox} -({diff})");
-                        if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Imaginari, 2) >= 0.5)
+                        if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Im, 2) >= 0.5)
                         {
                             q--;
                         }
@@ -112,7 +112,7 @@ namespace NNPTPZ1
                     var id = 0;
                     for (int w = 0; w <koreny.Count;w++)
                     {
-                        if (Math.Pow(ox.Re- koreny[w].Re, 2) + Math.Pow(ox.Imaginari - koreny[w].Imaginari, 2) <= 0.01)
+                        if (Math.Pow(ox.Re- koreny[w].Re, 2) + Math.Pow(ox.Im - koreny[w].Im, 2) <= 0.01)
                         {
                             known = true;
                             id = w;
@@ -192,7 +192,7 @@ namespace NNPTPZ1
             /// <returns>y</returns>
             public Cplx Eval(double x)
             {
-                var y = Eval(new Cplx() { Re = x, Imaginari = 0 });
+                var y = Eval(new Cplx() { Re = x, Im = 0 });
                 return y;
             }
 
@@ -253,14 +253,14 @@ namespace NNPTPZ1
         public class Cplx
         {
             public double Re { get; set; }
-            public float Imaginari { get; set; }
+            public float Im { get; set; }
 
             public override bool Equals(object obj)
             {
                 if (obj is Cplx)
                 {
                     Cplx x = obj as Cplx;
-                    return x.Re == Re && x.Imaginari == Imaginari;
+                    return x.Re == Re && x.Im == Im;
                 }
                 return base.Equals(obj);
             }
@@ -268,7 +268,7 @@ namespace NNPTPZ1
             public readonly static Cplx Zero = new Cplx()
             {
                 Re = 0,
-                Imaginari = 0
+                Im = 0
             };
 
             public Cplx Multiply(Cplx b)
@@ -277,13 +277,13 @@ namespace NNPTPZ1
                 // aRe*bRe + aRe*bIm*i + aIm*bRe*i + aIm*bIm*i*i
                 return new Cplx()
                 {
-                    Re = a.Re * b.Re - a.Imaginari * b.Imaginari,
-                    Imaginari = (float)(a.Re * b.Imaginari + a.Imaginari * b.Re)
+                    Re = a.Re * b.Re - a.Im * b.Im,
+                    Im = (float)(a.Re * b.Im + a.Im * b.Re)
                 };
             }
             public double GetAbS()
             {
-                return Math.Sqrt( Re * Re + Imaginari * Imaginari);
+                return Math.Sqrt( Re * Re + Im * Im);
             }
 
             public Cplx Add(Cplx b)
@@ -292,12 +292,12 @@ namespace NNPTPZ1
                 return new Cplx()
                 {
                     Re = a.Re + b.Re,
-                    Imaginari = a.Imaginari + b.Imaginari
+                    Im = a.Im + b.Im
                 };
             }
             public double GetAngleInDegrees()
             {
-                return Math.Atan(Imaginari / Re);
+                return Math.Atan(Im / Re);
             }
             public Cplx Subtract(Cplx b)
             {
@@ -305,13 +305,13 @@ namespace NNPTPZ1
                 return new Cplx()
                 {
                     Re = a.Re - b.Re,
-                    Imaginari = a.Imaginari - b.Imaginari
+                    Im = a.Im - b.Im
                 };
             }
 
             public override string ToString()
             {
-                return $"({Re} + {Imaginari}i)";
+                return $"({Re} + {Im}i)";
             }
 
             internal Cplx Divide(Cplx b)
@@ -319,13 +319,13 @@ namespace NNPTPZ1
                 // (aRe + aIm*i) / (bRe + bIm*i)
                 // ((aRe + aIm*i) * (bRe - bIm*i)) / ((bRe + bIm*i) * (bRe - bIm*i))
                 //  bRe*bRe - bIm*bIm*i*i
-                var tmp = this.Multiply(new Cplx() { Re = b.Re, Imaginari = -b.Imaginari });
-                var tmp2 = b.Re * b.Re + b.Imaginari * b.Imaginari;
+                var tmp = this.Multiply(new Cplx() { Re = b.Re, Im = -b.Im });
+                var tmp2 = b.Re * b.Re + b.Im * b.Im;
 
                 return new Cplx()
                 {
                     Re = tmp.Re / tmp2,
-                    Imaginari = (float)(tmp.Imaginari / tmp2)
+                    Im = (float)(tmp.Im / tmp2)
                 };
             }
         }
