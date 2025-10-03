@@ -5,31 +5,31 @@ namespace NNPTPZ1
 
     namespace Mathematics
     {
-        public class Poly
+        public class Polynomial
         {
             /// <summary>
-            /// Coe
+            /// Coefficients
             /// </summary>
-            public List<Cplx> Coe { get; set; }
+            public List<ComplexNumber> Coefficients { get; set; }
 
             /// <summary>
             /// Constructor
             /// </summary>
-            public Poly() => Coe = new List<Cplx>();
+            public Polynomial() => Coefficients = new List<ComplexNumber>();
 
-            public void Add(Cplx coe) =>
-                Coe.Add(coe);
+            public void Add(ComplexNumber coe) =>
+                Coefficients.Add(coe);
 
             /// <summary>
             /// Derives this polynomial and creates new one
             /// </summary>
             /// <returns>Derivated polynomial</returns>
-            public Poly Derive()
+            public Polynomial Derive()
             {
-                Poly p = new Poly();
-                for (int q = 1; q < Coe.Count; q++)
+                Polynomial p = new Polynomial();
+                for (int q = 1; q < Coefficients.Count; q++)
                 {
-                    p.Coe.Add(Coe[q].Multiply(new Cplx() { Re = q }));
+                    p.Coefficients.Add(Coefficients[q].Multiply(new ComplexNumber() { Real = q }));
                 }
 
                 return p;
@@ -40,9 +40,9 @@ namespace NNPTPZ1
             /// </summary>
             /// <param name="x">point of evaluation</param>
             /// <returns>y</returns>
-            public Cplx Eval(double x)
+            public ComplexNumber Eval(double x)
             {
-                var y = Eval(new Cplx() { Re = x, Imaginari = 0 });
+                var y = Eval(new ComplexNumber() { Real = x, Imaginary = 0 });
                 return y;
             }
 
@@ -51,13 +51,13 @@ namespace NNPTPZ1
             /// </summary>
             /// <param name="x">point of evaluation</param>
             /// <returns>y</returns>
-            public Cplx Eval(Cplx x)
+            public ComplexNumber Eval(ComplexNumber x)
             {
-                Cplx s = Cplx.Zero;
-                for (int i = 0; i < Coe.Count; i++)
+                ComplexNumber s = ComplexNumber.Zero;
+                for (int i = 0; i < Coefficients.Count; i++)
                 {
-                    Cplx coef = Coe[i];
-                    Cplx bx = x;
+                    ComplexNumber coef = Coefficients[i];
+                    ComplexNumber bx = x;
                     int power = i;
 
                     if (i > 0)
@@ -82,9 +82,9 @@ namespace NNPTPZ1
             {
                 string s = "";
                 int i = 0;
-                for (; i < Coe.Count; i++)
+                for (; i < Coefficients.Count; i++)
                 {
-                    s += Coe[i];
+                    s += Coefficients[i];
                     if (i > 0)
                     {
                         int j = 0;
@@ -93,7 +93,7 @@ namespace NNPTPZ1
                             s += "x";
                         }
                     }
-                    if (i+1<Coe.Count)
+                    if (i+1<Coefficients.Count)
                     s += " + ";
                 }
                 return s;
