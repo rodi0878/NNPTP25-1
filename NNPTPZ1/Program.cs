@@ -112,7 +112,7 @@ namespace NNPTPZ1
                     var id = 0;
                     for (int w = 0; w <koreny.Count;w++)
                     {
-                        if (Math.Pow(ox.Real- koreny[w].Re, 2) + Math.Pow(ox.Imaginary - koreny[w].Imaginary, 2) <= 0.01)
+                        if (Math.Pow(ox.Real- koreny[w].Real, 2) + Math.Pow(ox.Imaginary - koreny[w].Imaginary, 2) <= 0.01)
                         {
                             known = true;
                             id = w;
@@ -318,7 +318,7 @@ namespace NNPTPZ1
             {
                 // (aReal + aImaginary*i) / (bReal + bImaginary*i)
                 // ((aReal + aImaginary*i) * (bReal - bImaginary*i)) / ((bReal + bImaginary*i) * (bReal - bImaginary*i))
-                //  bRe*bRe - bIm*bIm*i*i
+                //  bReal*bReal - bIm*bIm*i*i
                 var tmp = this.Multiply(new Cplx() { Real = b.Real, Imaginary = -b.Imaginary });
                 var tmp2 = b.Real * b.Real + b.Imaginary * b.Imaginary;
 
