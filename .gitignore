@@ -43,3 +43,9 @@ INPTPZ1/obj/
 INPTPZ1Tests/bin/
 INPTPZ1Tests/obj/
 packages/
+
+bin/
+obj/
+packages/
+Debug/
+Release/
