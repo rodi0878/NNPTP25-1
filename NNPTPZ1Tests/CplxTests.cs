@@ -18,20 +18,20 @@ namespace NNPTPZ1.Mathematics.Tests
         {
             Cplx a = new Cplx()
             {
-                Re = 10,
-                Imaginari = 20
+                Real = 10,
+                Imaginary = 20
             };
             Cplx b = new Cplx()
             {
-                Re = 1,
-                Imaginari = 2
+                Real = 1,
+                Imaginary = 2
             };
 
             Cplx actual = a.Add(b);
             Cplx shouldBe = new Cplx()
             {
-                Re = 11,
-                Imaginari = 22
+                Real = 11,
+                Imaginary = 22
             };
 
             Assert.AreEqual(shouldBe, actual);
@@ -45,11 +45,11 @@ namespace NNPTPZ1.Mathematics.Tests
 
             a = new Cplx()
             {
-                Re = 1,
-                Imaginari = -1
+                Real = 1,
+                Imaginary = -1
             };
-            b = new Cplx() { Re = 0, Imaginari = 0 };
-            shouldBe = new Cplx() { Re = 1, Imaginari = -1 };
+            b = new Cplx() { Real = 0, Imaginary = 0 };
+            shouldBe = new Cplx() { Real = 1, Imaginary = -1 };
             actual = a.Add(b);
             Assert.AreEqual(shouldBe, actual);
 
@@ -66,17 +66,17 @@ namespace NNPTPZ1.Mathematics.Tests
         public void AddTestPolynome()
         {
             Poly poly = new Mathematics.Poly();
-            poly.Coe.Add(new Cplx() { Re = 1, Imaginari = 0 });
-            poly.Coe.Add(new Cplx() { Re = 0, Imaginari = 0 });
-            poly.Coe.Add(new Cplx() { Re = 1, Imaginari = 0 });
-            Cplx result = poly.Eval(new Cplx() { Re = 0, Imaginari = 0 });
-            var expected = new Cplx() { Re = 1, Imaginari = 0 };
+            poly.Coe.Add(new Cplx() { Real = 1, Imaginary = 0 });
+            poly.Coe.Add(new Cplx() { Real = 0, Imaginary = 0 });
+            poly.Coe.Add(new Cplx() { Real = 1, Imaginary = 0 });
+            Cplx result = poly.Eval(new Cplx() { Real = 0, Imaginary = 0 });
+            var expected = new Cplx() { Real = 1, Imaginary = 0 };
             Assert.AreEqual(expected, result);
-            result = poly.Eval(new Cplx() { Re = 1, Imaginari = 0 });
-            expected = new Cplx() { Re = 2, Imaginari = 0 };
+            result = poly.Eval(new Cplx() { Real = 1, Imaginary = 0 });
+            expected = new Cplx() { Real = 2, Imaginary = 0 };
             Assert.AreEqual(expected, result);
-            result = poly.Eval(new Cplx() { Re = 2, Imaginari = 0 });
-            expected = new Cplx() { Re = 5.0000000000, Imaginari = 0 };
+            result = poly.Eval(new Cplx() { Real = 2, Imaginary = 0 });
+            expected = new Cplx() { Real = 5.0000000000, Imaginary = 0 };
             Assert.AreEqual(expected, result);
 
             var r2 = poly.ToString();

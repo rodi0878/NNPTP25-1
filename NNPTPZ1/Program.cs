@@ -49,11 +49,11 @@ namespace NNPTPZ1
             List<Cplx> koreny = new List<Cplx>();
             // TODO: poly should be parameterised?
             Poly p = new Poly();
-            p.Coe.Add(new Cplx() { Re = 1 });
+            p.Coe.Add(new Cplx() { Real = 1 });
             p.Coe.Add(Cplx.Zero);
             p.Coe.Add(Cplx.Zero);
             //p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(new Cplx() { Re = 1 });
+            p.Coe.Add(new Cplx() { Real = 1 });
             Poly ptmp = p;
             Poly pd = p.Derive();
 
@@ -79,14 +79,14 @@ namespace NNPTPZ1
 
                     Cplx ox = new Cplx()
                     {
-                        Re = x,
-                        Imaginari = (float)(y)
+                        Real = x,
+                        Imaginary = (float)(y)
                     };
 
-                    if (ox.Re == 0)
-                        ox.Re = 0.0001;
-                    if (ox.Imaginari == 0)
-                        ox.Imaginari = 0.0001f;
+                    if (ox.Real == 0)
+                        ox.Real = 0.0001;
+                    if (ox.Imaginary == 0)
+                        ox.Imaginary = 0.0001f;
 
                     //Console.WriteLine(ox);
 
@@ -98,7 +98,7 @@ namespace NNPTPZ1
                         ox = ox.Subtract(diff);
 
                         //Console.WriteLine($"{q} {ox} -({diff})");
-                        if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Imaginari, 2) >= 0.5)
+                        if (Math.Pow(diff.Real, 2) + Math.Pow(diff.Imaginary, 2) >= 0.5)
                         {
                             q--;
                         }
@@ -112,7 +112,7 @@ namespace NNPTPZ1
                     var id = 0;
                     for (int w = 0; w <koreny.Count;w++)
                     {
-                        if (Math.Pow(ox.Re- koreny[w].Re, 2) + Math.Pow(ox.Imaginari - koreny[w].Imaginari, 2) <= 0.01)
+                        if (Math.Pow(ox.Real- koreny[w].Real, 2) + Math.Pow(ox.Imaginary - koreny[w].Imaginary, 2) <= 0.01)
                         {
                             known = true;
                             id = w;
@@ -179,7 +179,7 @@ namespace NNPTPZ1
                 Poly p = new Poly();
                 for (int q = 1; q < Coe.Count; q++)
                 {
-                    p.Coe.Add(Coe[q].Multiply(new Cplx() { Re = q }));
+                    p.Coe.Add(Coe[q].Multiply(new Cplx() { Real = q }));
                 }
 
                 return p;
@@ -192,7 +192,7 @@ namespace NNPTPZ1
             /// <returns>y</returns>
             public Cplx Eval(double x)
             {
-                var y = Eval(new Cplx() { Re = x, Imaginari = 0 });
+                var y = Eval(new Cplx() { Real = x, Imaginary = 0 });
                 return y;
             }
 
@@ -252,38 +252,38 @@ namespace NNPTPZ1
 
         public class Cplx
         {
-            public double Re { get; set; }
-            public float Imaginari { get; set; }
+            public double Real { get; set; }
+            public float Imaginary { get; set; }
 
             public override bool Equals(object obj)
             {
                 if (obj is Cplx)
                 {
                     Cplx x = obj as Cplx;
-                    return x.Re == Re && x.Imaginari == Imaginari;
+                    return x.Real == Real && x.Imaginary == Imaginary;
                 }
                 return base.Equals(obj);
             }
 
             public readonly static Cplx Zero = new Cplx()
             {
-                Re = 0,
-                Imaginari = 0
+                Real = 0,
+                Imaginary = 0
             };
 
             public Cplx Multiply(Cplx b)
             {
                 Cplx a = this;
-                // aRe*bRe + aRe*bIm*i + aIm*bRe*i + aIm*bIm*i*i
+                // aReal*bReal + aReal*bImaginary*i + aImaginary*bReal*i + aImaginary*bImaginary*i*i
                 return new Cplx()
                 {
-                    Re = a.Re * b.Re - a.Imaginari * b.Imaginari,
-                    Imaginari = (float)(a.Re * b.Imaginari + a.Imaginari * b.Re)
+                    Real = a.Real * b.Real - a.Imaginary * b.Imaginary,
+                    Imaginary = (float)(a.Real * b.Imaginary + a.Imaginary * b.Real)
                 };
             }
             public double GetAbS()
             {
-                return Math.Sqrt( Re * Re + Imaginari * Imaginari);
+                return Math.Sqrt( Real * Real + Imaginary * Imaginary);
             }
 
             public Cplx Add(Cplx b)
@@ -291,41 +291,41 @@ namespace NNPTPZ1
                 Cplx a = this;
                 return new Cplx()
                 {
-                    Re = a.Re + b.Re,
-                    Imaginari = a.Imaginari + b.Imaginari
+                    Real = a.Real + b.Real,
+                    Imaginary = a.Imaginary + b.Imaginary
                 };
             }
             public double GetAngleInDegrees()
             {
-                return Math.Atan(Imaginari / Re);
+                return Math.Atan(Imaginary / Real);
             }
             public Cplx Subtract(Cplx b)
             {
                 Cplx a = this;
                 return new Cplx()
                 {
-                    Re = a.Re - b.Re,
-                    Imaginari = a.Imaginari - b.Imaginari
+                    Real = a.Real - b.Real,
+                    Imaginary = a.Imaginary - b.Imaginary
                 };
             }
 
             public override string ToString()
             {
-                return $"({Re} + {Imaginari}i)";
+                return $"({Real} + {Imaginary}i)";
             }
 
             internal Cplx Divide(Cplx b)
             {
-                // (aRe + aIm*i) / (bRe + bIm*i)
-                // ((aRe + aIm*i) * (bRe - bIm*i)) / ((bRe + bIm*i) * (bRe - bIm*i))
-                //  bRe*bRe - bIm*bIm*i*i
-                var tmp = this.Multiply(new Cplx() { Re = b.Re, Imaginari = -b.Imaginari });
-                var tmp2 = b.Re * b.Re + b.Imaginari * b.Imaginari;
+                // (aReal + aImaginary*i) / (bReal + bImaginary*i)
+                // ((aReal + aImaginary*i) * (bReal - bImaginary*i)) / ((bReal + bImaginary*i) * (bReal - bImaginary*i))
+                //  bReal*bReal - bIm*bIm*i*i
+                var tmp = this.Multiply(new Cplx() { Real = b.Real, Imaginary = -b.Imaginary });
+                var tmp2 = b.Real * b.Real + b.Imaginary * b.Imaginary;
 
                 return new Cplx()
                 {
-                    Re = tmp.Re / tmp2,
-                    Imaginari = (float)(tmp.Imaginari / tmp2)
+                    Real = tmp.Real / tmp2,
+                    Imaginary = (float)(tmp.Imaginary / tmp2)
                 };
             }
         }
