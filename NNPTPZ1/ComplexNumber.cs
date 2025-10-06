@@ -1,84 +1,77 @@
 ﻿using System;
 
-namespace NNPTPZ1
+namespace NNPTPZ1.Mathematics
 {
-
-    namespace Mathematics
+    public class ComplexNumber
     {
-        public class ComplexNumber
+        public double Real { get; set; }
+        public double Imaginary { get; set; }
+
+        public static readonly ComplexNumber Zero = new ComplexNumber { Real = 0, Imaginary = 0 };
+
+        public override bool Equals(object obj)
         {
-            public double Real { get; set; }
-            public float Imaginary { get; set; }
-
-            public override bool Equals(object obj)
+            if (obj is ComplexNumber)
             {
-                if (obj is ComplexNumber)
-                {
-                    ComplexNumber x = obj as ComplexNumber;
-                    return x.Real == Real && x.Imaginary == Imaginary;
-                }
-                return base.Equals(obj);
+                ComplexNumber x = obj as ComplexNumber;
+                return x.Real == Real && x.Imaginary == Imaginary;
             }
+            return base.Equals(obj);
+        }
 
-            public readonly static ComplexNumber Zero = new ComplexNumber()
+        public ComplexNumber Multiply(ComplexNumber b)
+        {
+            ComplexNumber a = this;
+            return new ComplexNumber()
             {
-                Real = 0,
-                Imaginary = 0
+                Real = a.Real * b.Real - a.Imaginary * b.Imaginary,
+                Imaginary = a.Real * b.Imaginary + a.Imaginary * b.Real
             };
+        }
+        public double Magnitude()
+        {
+            return Math.Sqrt(Real * Real + Imaginary * Imaginary);
+        }
 
-            public ComplexNumber Multiply(ComplexNumber b)
+        public ComplexNumber Add(ComplexNumber b)
+        {
+            ComplexNumber a = this;
+            return new ComplexNumber()
             {
-                ComplexNumber a = this;
-                return new ComplexNumber()
-                {
-                    Real = a.Real * b.Real - a.Imaginary * b.Imaginary,
-                    Imaginary = (float)(a.Real * b.Imaginary + a.Imaginary * b.Real)
-                };
-            }
-            public double GetAbS()
+                Real = a.Real + b.Real,
+                Imaginary = a.Imaginary + b.Imaginary
+            };
+        }
+        public double GetAngleInRadians()
+        {
+            return Math.Atan(Imaginary / Real);
+        }
+        public ComplexNumber Subtract(ComplexNumber b)
+        {
+            ComplexNumber a = this;
+            return new ComplexNumber()
             {
-                return Math.Sqrt( Real * Real + Imaginary * Imaginary);
-            }
+                Real = a.Real - b.Real,
+                Imaginary = a.Imaginary - b.Imaginary
+            };
+        }
 
-            public ComplexNumber Add(ComplexNumber b)
-            {
-                ComplexNumber a = this;
-                return new ComplexNumber()
-                {
-                    Real = a.Real + b.Real,
-                    Imaginary = a.Imaginary + b.Imaginary
-                };
-            }
-            public double GetAngleInDegrees()
-            {
-                return Math.Atan(Imaginary / Real);
-            }
-            public ComplexNumber Subtract(ComplexNumber b)
-            {
-                ComplexNumber a = this;
-                return new ComplexNumber()
-                {
-                    Real = a.Real - b.Real,
-                    Imaginary = a.Imaginary - b.Imaginary
-                };
-            }
+        public override string ToString()
+        {
+            return $"({Real} + {Imaginary}i)";
+        }
 
-            public override string ToString()
-            {
-                return $"({Real} + {Imaginary}i)";
-            }
+        public ComplexNumber Divide(ComplexNumber b)
+        {
+            var tmp = this.Multiply(new ComplexNumber() { Real = b.Real, Imaginary = -b.Imaginary });
+            var tmp2 = b.Real * b.Real + b.Imaginary * b.Imaginary;
 
-            internal ComplexNumber Divide(ComplexNumber b)
+            return new ComplexNumber()
             {
-                var tmp = this.Multiply(new ComplexNumber() { Real = b.Real, Imaginary = -b.Imaginary });
-                var tmp2 = b.Real * b.Real + b.Imaginary * b.Imaginary;
-
-                return new ComplexNumber()
-                {
-                    Real = tmp.Real / tmp2,
-                    Imaginary = (float)(tmp.Imaginary / tmp2)
-                };
-            }
+                Real = tmp.Real / tmp2,
+                Imaginary = tmp.Imaginary / tmp2
+            };
         }
     }
+
 }

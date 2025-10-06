@@ -41,18 +41,15 @@ namespace NNPTPZ1
             p.Coefficients.Add(ComplexNumber.Zero);
             p.Coefficients.Add(ComplexNumber.Zero);
             p.Coefficients.Add(new ComplexNumber() { Real = 1 });
-            Polynomial ptmp = p;
-            Polynomial pd = p.Derive();
+            Polynomial pd = p.GetDerivative();
 
             Console.WriteLine(p);
             Console.WriteLine(pd);
 
-            var clrs = new Color[]
+            var colors = new Color[]
             {
                 Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
             };
-
-            var maxid = 0;
 
             // TODO: cleanup!!!
             // for every pixel in image...
@@ -67,7 +64,7 @@ namespace NNPTPZ1
                     ComplexNumber ox = new ComplexNumber()
                     {
                         Real = x,
-                        Imaginary = (float)(y)
+                        Imaginary = y
                     };
 
                     if (ox.Real == 0)
@@ -76,10 +73,10 @@ namespace NNPTPZ1
                         ox.Imaginary = 0.0001f;
 
                     // find solution of equation using newton's iteration
-                    float it = 0;
+                    int it = 0;
                     for (int q = 0; q< 30; q++)
                     {
-                        var diff = p.Eval(ox).Divide(pd.Eval(ox));
+                        var diff = p.Evaluate(ox).Divide(pd.Evaluate(ox));
                         ox = ox.Subtract(diff);
 
                         if (Math.Pow(diff.Real, 2) + Math.Pow(diff.Imaginary, 2) >= 0.5)
@@ -91,7 +88,7 @@ namespace NNPTPZ1
 
                     // find solution root number
                     var known = false;
-                    var id = 0;
+                    int id = 0;
                     for (int w = 0; w <koreny.Count;w++)
                     {
                         if (Math.Pow(ox.Real- koreny[w].Real, 2) + Math.Pow(ox.Imaginary - koreny[w].Imaginary, 2) <= 0.01)
@@ -104,18 +101,15 @@ namespace NNPTPZ1
                     {
                         koreny.Add(ox);
                         id = koreny.Count;
-                        maxid = id + 1; 
                     }
 
                     // colorize pixel according to root number
-                    var color = clrs[id % clrs.Length];
-                    color = Color.FromArgb(color.R, color.G, color.B);
+                    var color = colors[id % colors.Length];
                     color = Color.FromArgb(Math.Min(Math.Max(0, color.R-(int)it*2), 255), Math.Min(Math.Max(0, color.G - (int)it*2), 255), Math.Min(Math.Max(0, color.B - (int)it*2), 255));
                     bmp.SetPixel(j, i, color);
                 }
             }
             bmp.Save(output ?? "../../../out.png");
-            //Console.ReadKey();
         }
     }
 }
