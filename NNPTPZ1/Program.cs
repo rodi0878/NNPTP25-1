@@ -13,103 +13,111 @@ namespace NNPTPZ1
     {
         static void Main(string[] args)
         {
-            int[] intargs = new int[2];
-            for (int i = 0; i < intargs.Length; i++)
-            {
-                intargs[i] = int.Parse(args[i]);
-            }
-            double[] doubleargs = new double[4];
-            for (int i = 0; i < doubleargs.Length; i++)
-            {
-                doubleargs[i] = double.Parse(args[i + 2]);
-            }
-            string output = args[6];
-            // TODO: add parameters from args?
-            Bitmap bmp = new Bitmap(intargs[0], intargs[1]);
-            double xmin = doubleargs[0];
-            double xmax = doubleargs[1];
-            double ymin = doubleargs[2];
-            double ymax = doubleargs[3];
+            var (width, height, xmin, xmax, ymin, ymax, output) = ParseArguments(args);
 
-            double xstep = (xmax - xmin) / intargs[0];
-            double ystep = (ymax - ymin) / intargs[1];
+            Bitmap fractalImage = new Bitmap(width, height);
+
+            double xstep = (xmax - xmin) / width;
+            double ystep = (ymax - ymin) / height;
 
             List<ComplexNumber> koreny = new List<ComplexNumber>();
-            // TODO: poly should be parameterised?
-            Polynomial p = new Polynomial();
-            p.Coefficients.Add(new ComplexNumber() { Real = 1 });
-            p.Coefficients.Add(ComplexNumber.Zero);
-            p.Coefficients.Add(ComplexNumber.Zero);
-            p.Coefficients.Add(new ComplexNumber() { Real = 1 });
-            Polynomial pd = p.GetDerivative();
-
-            Console.WriteLine(p);
-            Console.WriteLine(pd);
+            var (polynomial, derivativePolynomial) = CreatePolynomial();
 
             var colors = new Color[]
             {
                 Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
             };
 
-            // TODO: cleanup!!!
-            // for every pixel in image...
-            for (int i = 0; i < intargs[0]; i++)
+            for (int i = 0; i < width; i++)
             {
-                for (int j = 0; j < intargs[1]; j++)
+                for (int j = 0; j < height; j++)
                 {
-                    // find "world" coordinates of pixel
                     double y = ymin + i * ystep;
                     double x = xmin + j * xstep;
 
-                    ComplexNumber ox = new ComplexNumber()
-                    {
-                        Real = x,
-                        Imaginary = y
-                    };
-
-                    if (ox.Real == 0)
-                        ox.Real = 0.0001;
-                    if (ox.Imaginary == 0)
-                        ox.Imaginary = 0.0001f;
-
-                    // find solution of equation using newton's iteration
-                    int it = 0;
-                    for (int q = 0; q< 30; q++)
-                    {
-                        var diff = p.Evaluate(ox).Divide(pd.Evaluate(ox));
-                        ox = ox.Subtract(diff);
-
-                        if (Math.Pow(diff.Real, 2) + Math.Pow(diff.Imaginary, 2) >= 0.5)
-                        {
-                            q--;
-                        }
-                        it++;
-                    }
-
-                    // find solution root number
-                    var known = false;
-                    int id = 0;
-                    for (int w = 0; w <koreny.Count;w++)
-                    {
-                        if (Math.Pow(ox.Real- koreny[w].Real, 2) + Math.Pow(ox.Imaginary - koreny[w].Imaginary, 2) <= 0.01)
-                        {
-                            known = true;
-                            id = w;
-                        }
-                    }
-                    if (!known)
-                    {
-                        koreny.Add(ox);
-                        id = koreny.Count;
-                    }
-
-                    // colorize pixel according to root number
-                    var color = colors[id % colors.Length];
-                    color = Color.FromArgb(Math.Min(Math.Max(0, color.R-(int)it*2), 255), Math.Min(Math.Max(0, color.G - (int)it*2), 255), Math.Min(Math.Max(0, color.B - (int)it*2), 255));
-                    bmp.SetPixel(j, i, color);
+                    Color pixelColor = ComputePixelColor(x, y, polynomial, derivativePolynomial, koreny, colors);
+                    fractalImage.SetPixel(j, i, pixelColor);
                 }
             }
-            bmp.Save(output ?? "../../../out.png");
+            fractalImage.Save(output ?? "../../../out.png");
+        }
+
+        /// <summary>
+        /// Parses command-line arguments into named variables.
+        /// </summary>
+        private static (int width, int height, double xmin, double xmax, double ymin, double ymax, string output) ParseArguments(string[] args)
+        {
+            int width = int.Parse(args[0]);
+            int height = int.Parse(args[1]);
+            double xmin = double.Parse(args[2]);
+            double xmax = double.Parse(args[3]);
+            double ymin = double.Parse(args[4]);
+            double ymax = double.Parse(args[5]);
+            string output = args[6];
+
+            return (width, height, xmin, xmax, ymin, ymax, output);
+        }
+        private static (Polynomial p, Polynomial pd) CreatePolynomial()
+        {
+            Polynomial polynomial = new Polynomial();
+            polynomial.Coefficients.Add(new ComplexNumber() { Real = 1 });
+            polynomial.Coefficients.Add(ComplexNumber.Zero);
+            polynomial.Coefficients.Add(ComplexNumber.Zero);
+            polynomial.Coefficients.Add(new ComplexNumber() { Real = 1 });
+
+            Polynomial derivativePolynomial = polynomial.GetDerivative();
+
+            Console.WriteLine(polynomial);
+            Console.WriteLine(derivativePolynomial);
+
+            return (polynomial, derivativePolynomial);
+        }
+        private static Color ComputePixelColor(double x, double y, Polynomial polynomial, Polynomial derivativePolynomial, List<ComplexNumber> roots,
+                                                Color[] colors)
+        {
+            ComplexNumber currentEstimate = new ComplexNumber { Real = x, Imaginary = y };
+
+            if (currentEstimate.Real == 0) currentEstimate.Real = 0.0001;
+            if (currentEstimate.Imaginary == 0) currentEstimate.Imaginary = 0.0001f;
+
+            // Newton’s iteration
+            int iterations = 0;
+            for (int i = 0; i < 30; i++)
+            {
+                var diff = polynomial.Evaluate(currentEstimate).Divide(derivativePolynomial.Evaluate(currentEstimate));
+                currentEstimate = currentEstimate.Subtract(diff);
+
+                if (Math.Pow(diff.Real, 2) + Math.Pow(diff.Imaginary, 2) >= 0.5)
+                    i--;
+
+                iterations++;
+            }
+
+            // Determine root index
+            bool known = false;
+            int id = 0;
+            for (int j = 0; j < roots.Count; j++)
+            {
+                if (Math.Pow(currentEstimate.Real - roots[j].Real, 2) + Math.Pow(currentEstimate.Imaginary - roots[j].Imaginary, 2) <= 0.01)
+                {
+                    known = true;
+                    id = j;
+                    break;
+                }
+            }
+            if (!known)
+            {
+                roots.Add(currentEstimate);
+                id = roots.Count;
+            }
+
+            // Compute pixel color
+            var baseColor = colors[id % colors.Length];
+            return Color.FromArgb(
+                Math.Min(Math.Max(0, baseColor.R - iterations * 2), 255),
+                Math.Min(Math.Max(0, baseColor.G - iterations * 2), 255),
+                Math.Min(Math.Max(0, baseColor.B - iterations * 2), 255)
+            );
         }
     }
 }
