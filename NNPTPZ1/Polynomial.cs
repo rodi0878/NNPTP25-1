@@ -5,7 +5,7 @@ namespace NNPTPZ1.Mathematics
     public class Polynomial
     {
         /// <summary>
-        /// Coefficients
+        /// Gets or sets the coefficients of the polynomial, ordered by increasing power.
         /// </summary>
         public List<ComplexNumber> Coefficients { get; set; }
 
@@ -18,60 +18,65 @@ namespace NNPTPZ1.Mathematics
             Coefficients.Add(coefficient);
 
         /// <summary>
-        /// Derives this polynomial and creates new one
+        /// Computes the first derivative of this polynomial and returns it as a new Polynomial.
+        /// Coefficients are ordered by increasing power.
         /// </summary>
         /// <returns>Derivated polynomial</returns>
         public Polynomial GetDerivative()
         {
-            Polynomial p = new Polynomial();
-            for (int q = 1; q < Coefficients.Count; q++)
+            Polynomial derivativePolynomial = new Polynomial();
+            for (int i = 1; i < Coefficients.Count; i++)
             {
-                p.Coefficients.Add(Coefficients[q].Multiply(new ComplexNumber() { Real = q }));
+                derivativePolynomial.Coefficients.Add(Coefficients[i].Multiply(new ComplexNumber() { Real = i }));
             }
 
-            return p;
+            return derivativePolynomial;
         }
 
         /// <summary>
-        /// Evaluates polynomial at given point
+        /// Evaluates the polynomial at a real value and returns the result as a ComplexNumber.
         /// </summary>
-        /// <param name="x">point of evaluation</param>
-        /// <returns>y</returns>
-        public ComplexNumber Evaluate(double x)
+        /// <param name="realValue">point of evaluation</param>
+        /// <returns>
+        /// The value of the polynomial evaluated at the given real number, returned as a ComplexNumber with zero imaginary part.
+        /// </returns>
+        public ComplexNumber Evaluate(double realValue)
         {
-            var y = Evaluate(new ComplexNumber() { Real = x, Imaginary = 0 });
-            return y;
+            return Evaluate(new ComplexNumber() { Real = realValue, Imaginary = 0 });
         }
 
         /// <summary>
-        /// Evaluates polynomial at given point
+        /// Evaluates the polynomial at a complex point and returns the result as a ComplexNumber.
         /// </summary>
-        /// <param name="x">point of evaluation</param>
-        /// <returns>y</returns>
-        public ComplexNumber Evaluate(ComplexNumber x)
+        /// <param name="point">point of evaluation</param>
+        /// <returns>
+        /// The value of the polynomial evaluated at the given complex point, returned as a ComplexNumber.
+        /// </returns>
+
+        public ComplexNumber Evaluate(ComplexNumber point)
         {
-            ComplexNumber s = ComplexNumber.Zero;
+            ComplexNumber result = ComplexNumber.Zero;
             for (int i = 0; i < Coefficients.Count; i++)
             {
                 ComplexNumber coefficient = Coefficients[i];
-                ComplexNumber bx = x;
+                ComplexNumber xPower = point;
                 int power = i;
 
                 if (i > 0)
                 {
                     for (int j = 0; j < power - 1; j++)
-                        bx = bx.Multiply(x);
+                        xPower = xPower.Multiply(point);
 
-                    coefficient = coefficient.Multiply(bx);
+                    coefficient = coefficient.Multiply(xPower);
                 }
 
-                s = s.Add(coefficient);
+                result = result.Add(coefficient);
             }
-            return s;
+            return result;
         }
 
         /// <summary>
-        /// ToString
+        /// Returns a string representation of the polynomial in the form of a sum of terms.
         /// </summary>
         /// <returns>String repr of polynomial</returns>
         public override string ToString()

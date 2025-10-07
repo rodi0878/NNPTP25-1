@@ -20,7 +20,7 @@ namespace NNPTPZ1
             double xstep = (xmax - xmin) / width;
             double ystep = (ymax - ymin) / height;
 
-            List<ComplexNumber> koreny = new List<ComplexNumber>();
+            List<ComplexNumber> roots = new List<ComplexNumber>();
             var (polynomial, derivativePolynomial) = CreatePolynomial();
 
             var colors = new Color[]
@@ -35,7 +35,7 @@ namespace NNPTPZ1
                     double y = ymin + i * ystep;
                     double x = xmin + j * xstep;
 
-                    Color pixelColor = ComputePixelColor(x, y, polynomial, derivativePolynomial, koreny, colors);
+                    Color pixelColor = ComputePixelColor(x, y, polynomial, derivativePolynomial, roots, colors);
                     fractalImage.SetPixel(j, i, pixelColor);
                 }
             }
@@ -72,8 +72,7 @@ namespace NNPTPZ1
 
             return (polynomial, derivativePolynomial);
         }
-        private static Color ComputePixelColor(double x, double y, Polynomial polynomial, Polynomial derivativePolynomial, List<ComplexNumber> roots,
-                                                Color[] colors)
+        private static Color ComputePixelColor(double x, double y, Polynomial polynomial, Polynomial derivativePolynomial, List<ComplexNumber> roots,Color[] colors)
         {
             ComplexNumber currentEstimate = new ComplexNumber { Real = x, Imaginary = y };
 
