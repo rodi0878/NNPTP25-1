@@ -49,11 +49,11 @@ namespace NNPTPZ1
             List<ComplexNumber> koreny = new List<ComplexNumber>();
             // TODO: poly should be parameterised?
             Poly p = new Poly();
-            p.Coe.Add(new ComplexNumber() { Re = 1 });
+            p.Coe.Add(new ComplexNumber() { RealPart = 1 });
             p.Coe.Add(ComplexNumber.Zero);
             p.Coe.Add(ComplexNumber.Zero);
             //p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(new ComplexNumber() { Re = 1 });
+            p.Coe.Add(new ComplexNumber() { RealPart = 1 });
             Poly ptmp = p;
             Poly pd = p.Derive();
 
@@ -79,14 +79,14 @@ namespace NNPTPZ1
 
                     ComplexNumber ox = new ComplexNumber()
                     {
-                        Re = x,
-                        Imaginari = (float)(y)
+                        RealPart = x,
+                        ImaginaryPart = (float)(y)
                     };
 
-                    if (ox.Re == 0)
-                        ox.Re = 0.0001;
-                    if (ox.Imaginari == 0)
-                        ox.Imaginari = 0.0001f;
+                    if (ox.RealPart == 0)
+                        ox.RealPart = 0.0001;
+                    if (ox.ImaginaryPart == 0)
+                        ox.ImaginaryPart = 0.0001f;
 
                     //Console.WriteLine(ox);
 
@@ -98,7 +98,7 @@ namespace NNPTPZ1
                         ox = ox.Subtract(diff);
 
                         //Console.WriteLine($"{q} {ox} -({diff})");
-                        if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Imaginari, 2) >= 0.5)
+                        if (Math.Pow(diff.RealPart, 2) + Math.Pow(diff.ImaginaryPart, 2) >= 0.5)
                         {
                             q--;
                         }
@@ -112,7 +112,7 @@ namespace NNPTPZ1
                     var id = 0;
                     for (int w = 0; w <koreny.Count;w++)
                     {
-                        if (Math.Pow(ox.Re- koreny[w].Re, 2) + Math.Pow(ox.Imaginari - koreny[w].Imaginari, 2) <= 0.01)
+                        if (Math.Pow(ox.RealPart- koreny[w].RealPart, 2) + Math.Pow(ox.ImaginaryPart - koreny[w].ImaginaryPart, 2) <= 0.01)
                         {
                             known = true;
                             id = w;
@@ -179,7 +179,7 @@ namespace NNPTPZ1
                 Poly p = new Poly();
                 for (int q = 1; q < Coe.Count; q++)
                 {
-                    p.Coe.Add(Coe[q].Multiply(new ComplexNumber() { Re = q }));
+                    p.Coe.Add(Coe[q].Multiply(new ComplexNumber() { RealPart = q }));
                 }
 
                 return p;
@@ -192,7 +192,7 @@ namespace NNPTPZ1
             /// <returns>y</returns>
             public ComplexNumber Eval(double x)
             {
-                var y = Eval(new ComplexNumber() { Re = x, Imaginari = 0 });
+                var y = Eval(new ComplexNumber() { RealPart = x, ImaginaryPart = 0 });
                 return y;
             }
 
@@ -247,86 +247,6 @@ namespace NNPTPZ1
                     s += " + ";
                 }
                 return s;
-            }
-        }
-
-        public class ComplexNumber
-        {
-            public double Re { get; set; }
-            public float Imaginari { get; set; }
-
-            public override bool Equals(object obj)
-            {
-                if (obj is ComplexNumber)
-                {
-                    ComplexNumber x = obj as ComplexNumber;
-                    return x.Re == Re && x.Imaginari == Imaginari;
-                }
-                return base.Equals(obj);
-            }
-
-            public readonly static ComplexNumber Zero = new ComplexNumber()
-            {
-                Re = 0,
-                Imaginari = 0
-            };
-
-            public ComplexNumber Multiply(ComplexNumber b)
-            {
-                ComplexNumber a = this;
-                // aRe*bRe + aRe*bIm*i + aIm*bRe*i + aIm*bIm*i*i
-                return new ComplexNumber()
-                {
-                    Re = a.Re * b.Re - a.Imaginari * b.Imaginari,
-                    Imaginari = (float)(a.Re * b.Imaginari + a.Imaginari * b.Re)
-                };
-            }
-            public double GetAbS()
-            {
-                return Math.Sqrt( Re * Re + Imaginari * Imaginari);
-            }
-
-            public ComplexNumber Add(ComplexNumber b)
-            {
-                ComplexNumber a = this;
-                return new ComplexNumber()
-                {
-                    Re = a.Re + b.Re,
-                    Imaginari = a.Imaginari + b.Imaginari
-                };
-            }
-            public double GetAngleInDegrees()
-            {
-                return Math.Atan(Imaginari / Re);
-            }
-            public ComplexNumber Subtract(ComplexNumber b)
-            {
-                ComplexNumber a = this;
-                return new ComplexNumber()
-                {
-                    Re = a.Re - b.Re,
-                    Imaginari = a.Imaginari - b.Imaginari
-                };
-            }
-
-            public override string ToString()
-            {
-                return $"({Re} + {Imaginari}i)";
-            }
-
-            internal ComplexNumber Divide(ComplexNumber b)
-            {
-                // (aRe + aIm*i) / (bRe + bIm*i)
-                // ((aRe + aIm*i) * (bRe - bIm*i)) / ((bRe + bIm*i) * (bRe - bIm*i))
-                //  bRe*bRe - bIm*bIm*i*i
-                var tmp = this.Multiply(new ComplexNumber() { Re = b.Re, Imaginari = -b.Imaginari });
-                var tmp2 = b.Re * b.Re + b.Imaginari * b.Imaginari;
-
-                return new ComplexNumber()
-                {
-                    Re = tmp.Re / tmp2,
-                    Imaginari = (float)(tmp.Imaginari / tmp2)
-                };
             }
         }
     }
