@@ -9,16 +9,26 @@ namespace NNPTPZ1.Mathematics
 
         public readonly static ComplexNumber Zero = new ComplexNumber();
 
-        public ComplexNumber()
-        {
-            RealPart = 0;
-            ImaginaryPart = 0;
-        }
+        public readonly static ComplexNumber One = new ComplexNumber(1);
 
-        public ComplexNumber(double realPart, double imaginaryPart)
+        public ComplexNumber(double realPart = 0, double imaginaryPart = 0)
         {
             RealPart = realPart;
             ImaginaryPart = imaginaryPart;
+        }
+
+        public static ComplexNumber FromDouble(double realValue)
+        {
+            return new ComplexNumber(realValue);
+        }
+
+        public ComplexNumber Add(double other)
+        {
+            return new ComplexNumber()
+            {
+                RealPart = this.RealPart + other,
+                ImaginaryPart = this.ImaginaryPart
+            };
         }
 
         public ComplexNumber Add(ComplexNumber other)
@@ -29,12 +39,31 @@ namespace NNPTPZ1.Mathematics
                 ImaginaryPart = this.ImaginaryPart + other.ImaginaryPart
             };
         }
+
+        public ComplexNumber Subtract(double other)
+        {
+            return new ComplexNumber()
+            {
+                RealPart = this.RealPart - other,
+                ImaginaryPart = this.ImaginaryPart
+            };
+        }
+
         public ComplexNumber Subtract(ComplexNumber other)
         {
             return new ComplexNumber()
             {
                 RealPart = this.RealPart - other.RealPart,
                 ImaginaryPart = this.ImaginaryPart - other.ImaginaryPart
+            };
+        }
+
+        public ComplexNumber Multiply(double other)
+        {
+            return new ComplexNumber()
+            {
+                RealPart = this.RealPart * other,
+                ImaginaryPart = this.ImaginaryPart * other
             };
         }
 
@@ -48,8 +77,16 @@ namespace NNPTPZ1.Mathematics
             };
         }
 
-        // TODO
-        internal ComplexNumber Divide(ComplexNumber other)
+        public ComplexNumber Divide(double other)
+        {
+            return new ComplexNumber()
+            {
+                RealPart = this.RealPart / other,
+                ImaginaryPart = this.ImaginaryPart / other
+            };
+        }
+
+        public ComplexNumber Divide(ComplexNumber other)
         {
             // (aRe + aIm*i) / (bRe + bIm*i)
             // ((aRe + aIm*i) * (bRe - bIm*i)) / ((bRe + bIm*i) * (bRe - bIm*i))
@@ -61,6 +98,24 @@ namespace NNPTPZ1.Mathematics
                 RealPart = (this.RealPart * this.ImaginaryPart + other.RealPart * other.ImaginaryPart) / denominator,
                 ImaginaryPart = (other.RealPart * this.ImaginaryPart - this.RealPart * other.ImaginaryPart) / denominator
             };
+        }
+
+        public ComplexNumber Power(int power)
+        {
+            ComplexNumber result = ComplexNumber.One;
+            bool isPowerPositive = true;
+            if (power < 0)
+            {
+                power = -power;
+                isPowerPositive = false;
+            }
+
+            for (int i = 0; i < power; i++)
+            {
+                result = result.Multiply(this);
+            }
+
+            return (isPowerPositive) ? result : ComplexNumber.One.Divide(result);
         }
 
         public double GetMagnitudeSquared()
