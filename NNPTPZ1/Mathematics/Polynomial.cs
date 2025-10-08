@@ -5,44 +5,54 @@ namespace NNPTPZ1.Mathematics
 {
     public class Polynomial
     {
-        public List<ComplexNumber> Coefficients { get; private set; }
+        private readonly List<ComplexNumber> _coefficients;
 
-        public Polynomial() => Coefficients = new List<ComplexNumber>();
-
-        public void AddCoefficient(ComplexNumber newCoefficient) => Coefficients.Add(newCoefficient);
-
-        public Polynomial Differentiate()
+        public Polynomial(params ComplexNumber[] coefficients)
         {
-            Polynomial derivative = new Polynomial();
-            for (int q = 1; q < this.Coefficients.Count; q++)
-            {
-                derivative.AddCoefficient(Coefficients[q].Multiply(q));
-            }
-
-            return derivative;
+            _coefficients = new List<ComplexNumber>(coefficients);
         }
 
-        public ComplexNumber EvaluateAt(double evaluationPoint) => EvaluateAt(ComplexNumber.FromDouble(evaluationPoint));
+        public void AddCoefficient(ComplexNumber newCoefficient)
+        {
+            _coefficients.Add(newCoefficient);
+        }
+
+        public ComplexNumber EvaluateAt(double evaluationPoint)
+        {
+            return EvaluateAt(ComplexNumber.FromDouble(evaluationPoint));
+        }
 
         public ComplexNumber EvaluateAt(ComplexNumber evaluationPoint)
         {
             ComplexNumber result = ComplexNumber.Zero;
-            for (int i = 0; i < Coefficients.Count; i++)
+            // Horner's method
+            for (int i = _coefficients.Count - 1; i >= 0; i--)
             {
-                result = result.Add(Coefficients[i].Multiply(evaluationPoint.Power(i)));
+                result = result.Multiply(evaluationPoint).Add(_coefficients[i]);
             }
 
             return result;
         }
 
+        public Polynomial Differentiate()
+        {
+            Polynomial derivative = new Polynomial();
+            for (int i = 1; i < _coefficients.Count; i++)
+            {
+                derivative.AddCoefficient(_coefficients[i].Multiply(i));
+            }
+
+            return derivative;
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = Coefficients.Count; i > 0; i--)
+            for (int i = _coefficients.Count - 1; i > 0; i--)
             {
-                sb.Append(Coefficients[i]).Append("x^").Append(i).Append(" + ");
+                sb.Append(_coefficients[i]).Append("x^").Append(i).Append(" + ");
             }
-            sb.Append(Coefficients[0]);
+            sb.Append(_coefficients[0]);
 
             return sb.ToString();
         }
