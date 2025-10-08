@@ -4,8 +4,8 @@ namespace NNPTPZ1.Mathematics
 {
     public class ComplexNumber
     {
-        public double RealPart { get; set; }
-        public double ImaginaryPart { get; set; }
+        public double RealPart { get; private set; }
+        public double ImaginaryPart { get; private set; }
 
         public readonly static ComplexNumber Zero = new ComplexNumber();
 
