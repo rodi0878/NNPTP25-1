@@ -3,23 +3,14 @@ namespace Mathematics
 {
     public class ComplexNumber
     {
-        public double Re { get; set; }
-        public float Imaginari { get; set; }
+        public double RealPart { get; set; }
+        public double ImaginaryPart { get; set; }
 
-        public override bool Equals(object obj)
-        {
-            if (obj is ComplexNumber)
-            {
-                ComplexNumber x = obj as ComplexNumber;
-                return x.Re == Re && x.Imaginari == Imaginari;
-            }
-            return base.Equals(obj);
-        }
 
         public readonly static ComplexNumber Zero = new ComplexNumber()
         {
-            Re = 0,
-            Imaginari = 0
+            RealPart = 0,
+            ImaginaryPart = 0
         };
 
         public ComplexNumber Multiply(ComplexNumber b)
@@ -28,41 +19,43 @@ namespace Mathematics
             // aRe*bRe + aRe*bIm*i + aIm*bRe*i + aIm*bIm*i*i
             return new ComplexNumber()
             {
-                Re = a.Re * b.Re - a.Imaginari * b.Imaginari,
-                Imaginari = (float)(a.Re * b.Imaginari + a.Imaginari * b.Re)
+                RealPart = a.RealPart * b.RealPart - a.ImaginaryPart * b.ImaginaryPart,
+                ImaginaryPart = (float)(a.RealPart * b.ImaginaryPart + a.ImaginaryPart * b.RealPart)
             };
-        }
-        public double GetAbS()
-        {
-            return Math.Sqrt(Re * Re + Imaginari * Imaginari);
         }
 
-        public ComplexNumber Add(ComplexNumber b)
+        public double GetAbsoluteValue()
         {
-            ComplexNumber a = this;
+            return Math.Sqrt(RealPart * RealPart + ImaginaryPart * ImaginaryPart);
+        }
+
+        public ComplexNumber Add(ComplexNumber addend)
+        {
             return new ComplexNumber()
             {
-                Re = a.Re + b.Re,
-                Imaginari = a.Imaginari + b.Imaginari
+                RealPart = RealPart + addend.RealPart,
+                ImaginaryPart = ImaginaryPart + addend.ImaginaryPart
             };
         }
-        public double GetAngleInDegrees()
+
+        public double GetAngleInRadians()
         {
-            return Math.Atan(Imaginari / Re);
+            return Math.Atan(ImaginaryPart / RealPart);
         }
+
         public ComplexNumber Subtract(ComplexNumber b)
         {
             ComplexNumber a = this;
             return new ComplexNumber()
             {
-                Re = a.Re - b.Re,
-                Imaginari = a.Imaginari - b.Imaginari
+                RealPart = a.RealPart - b.RealPart,
+                ImaginaryPart = a.ImaginaryPart - b.ImaginaryPart
             };
         }
 
         public override string ToString()
         {
-            return $"({Re} + {Imaginari}i)";
+            return $"({RealPart} + {ImaginaryPart}i)";
         }
 
         internal ComplexNumber Divide(ComplexNumber b)
@@ -70,14 +63,24 @@ namespace Mathematics
             // (aRe + aIm*i) / (bRe + bIm*i)
             // ((aRe + aIm*i) * (bRe - bIm*i)) / ((bRe + bIm*i) * (bRe - bIm*i))
             //  bRe*bRe - bIm*bIm*i*i
-            var tmp = this.Multiply(new ComplexNumber() { Re = b.Re, Imaginari = -b.Imaginari });
-            var tmp2 = b.Re * b.Re + b.Imaginari * b.Imaginari;
+            var tmp = this.Multiply(new ComplexNumber() { RealPart = b.RealPart, ImaginaryPart = -b.ImaginaryPart });
+            var tmp2 = b.RealPart * b.RealPart + b.ImaginaryPart * b.ImaginaryPart;
 
             return new ComplexNumber()
             {
-                Re = tmp.Re / tmp2,
-                Imaginari = (float)(tmp.Imaginari / tmp2)
+                RealPart = tmp.RealPart / tmp2,
+                ImaginaryPart = (float)(tmp.ImaginaryPart / tmp2)
             };
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ComplexNumber)
+            {
+                ComplexNumber x = obj as ComplexNumber;
+                return x.RealPart == RealPart && x.ImaginaryPart == ImaginaryPart;
+            }
+            return base.Equals(obj);
         }
     }
 }

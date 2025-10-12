@@ -25,7 +25,7 @@ namespace Mathematics
             Polynome p = new Polynome();
             for (int q = 1; q < Coe.Count; q++)
             {
-                p.Coe.Add(Coe[q].Multiply(new ComplexNumber() { Re = q }));
+                p.Coe.Add(Coe[q].Multiply(new ComplexNumber() { RealPart = q }));
             }
 
             return p;
@@ -38,7 +38,7 @@ namespace Mathematics
         /// <returns>y</returns>
         public ComplexNumber Eval(double x)
         {
-            var y = Eval(new ComplexNumber() { Re = x, Imaginari = 0 });
+            var y = Eval(new ComplexNumber() { RealPart = x, ImaginaryPart = 0 });
             return y;
         }
 

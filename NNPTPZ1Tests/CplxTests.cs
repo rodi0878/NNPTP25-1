@@ -17,20 +17,20 @@ namespace Mathematics.Tests
         {
             ComplexNumber a = new ComplexNumber()
             {
-                Re = 10,
-                Imaginari = 20
+                RealPart = 10,
+                ImaginaryPart = 20
             };
             ComplexNumber b = new ComplexNumber()
             {
-                Re = 1,
-                Imaginari = 2
+                RealPart = 1,
+                ImaginaryPart = 2
             };
 
             ComplexNumber actual = a.Add(b);
             ComplexNumber shouldBe = new ComplexNumber()
             {
-                Re = 11,
-                Imaginari = 22
+                RealPart = 11,
+                ImaginaryPart = 22
             };
 
             Assert.AreEqual(shouldBe, actual);
@@ -44,11 +44,11 @@ namespace Mathematics.Tests
 
             a = new ComplexNumber()
             {
-                Re = 1,
-                Imaginari = -1
+                RealPart = 1,
+                ImaginaryPart = -1
             };
-            b = new ComplexNumber() { Re = 0, Imaginari = 0 };
-            shouldBe = new ComplexNumber() { Re = 1, Imaginari = -1 };
+            b = new ComplexNumber() { RealPart = 0, ImaginaryPart = 0 };
+            shouldBe = new ComplexNumber() { RealPart = 1, ImaginaryPart = -1 };
             actual = a.Add(b);
             Assert.AreEqual(shouldBe, actual);
 
@@ -65,17 +65,17 @@ namespace Mathematics.Tests
         public void AddTestPolynome()
         {
             Polynome poly = new Mathematics.Polynome();
-            poly.Coe.Add(new ComplexNumber() { Re = 1, Imaginari = 0 });
-            poly.Coe.Add(new ComplexNumber() { Re = 0, Imaginari = 0 });
-            poly.Coe.Add(new ComplexNumber() { Re = 1, Imaginari = 0 });
-            ComplexNumber result = poly.Eval(new ComplexNumber() { Re = 0, Imaginari = 0 });
-            var expected = new ComplexNumber() { Re = 1, Imaginari = 0 };
+            poly.Coe.Add(new ComplexNumber() { RealPart = 1, ImaginaryPart = 0 });
+            poly.Coe.Add(new ComplexNumber() { RealPart = 0, ImaginaryPart = 0 });
+            poly.Coe.Add(new ComplexNumber() { RealPart = 1, ImaginaryPart = 0 });
+            ComplexNumber result = poly.Eval(new ComplexNumber() { RealPart = 0, ImaginaryPart = 0 });
+            var expected = new ComplexNumber() { RealPart = 1, ImaginaryPart = 0 };
             Assert.AreEqual(expected, result);
-            result = poly.Eval(new ComplexNumber() { Re = 1, Imaginari = 0 });
-            expected = new ComplexNumber() { Re = 2, Imaginari = 0 };
+            result = poly.Eval(new ComplexNumber() { RealPart = 1, ImaginaryPart = 0 });
+            expected = new ComplexNumber() { RealPart = 2, ImaginaryPart = 0 };
             Assert.AreEqual(expected, result);
-            result = poly.Eval(new ComplexNumber() { Re = 2, Imaginari = 0 });
-            expected = new ComplexNumber() { Re = 5.0000000000, Imaginari = 0 };
+            result = poly.Eval(new ComplexNumber() { RealPart = 2, ImaginaryPart = 0 });
+            expected = new ComplexNumber() { RealPart = 5.0000000000, ImaginaryPart = 0 };
             Assert.AreEqual(expected, result);
 
             var r2 = poly.ToString();
