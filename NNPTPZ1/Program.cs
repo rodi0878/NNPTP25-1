@@ -15,6 +15,10 @@ namespace NNPTPZ1
         static int imageWidth, imageHeight;
         static double xMin, xMax, yMin, yMax;
         static string outputPath;
+        static readonly Color[] colors =
+        {
+           Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
+        };
 
         static void Main(string[] args)
         {
@@ -36,11 +40,6 @@ namespace NNPTPZ1
 
             Console.WriteLine(p);
             Console.WriteLine(pd);
-
-            var clrs = new Color[]
-            {
-                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
-            };
 
             var maxid = 0;
 
@@ -92,7 +91,7 @@ namespace NNPTPZ1
                         maxid = id + 1;
                     }
 
-                    var vv = clrs[id % clrs.Length];
+                    var vv = colors[id % colors.Length];
                     vv = Color.FromArgb(vv.R, vv.G, vv.B);
                     vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R - (int)it * 2), 255), Math.Min(Math.Max(0, vv.G - (int)it * 2), 255), Math.Min(Math.Max(0, vv.B - (int)it * 2), 255));
                     bmp.SetPixel(j, i, vv);
