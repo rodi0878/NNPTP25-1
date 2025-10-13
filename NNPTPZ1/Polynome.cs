@@ -1,20 +1,18 @@
 using System.Collections.Generic;
+
 namespace Mathematics
 {
     public class Polynome
     {
         /// <summary>
-        /// Coe
+        /// Coefficients
         /// </summary>
-        public List<ComplexNumber> Coe { get; set; }
+        public List<ComplexNumber> Coefficients { get; set; }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public Polynome() => Coe = new List<ComplexNumber>();
-
-        public void Add(ComplexNumber coe) =>
-            Coe.Add(coe);
+        public Polynome() => Coefficients = new List<ComplexNumber>();
 
         /// <summary>
         /// Derives this polynomial and creates new one
@@ -23,9 +21,9 @@ namespace Mathematics
         public Polynome Derive()
         {
             Polynome p = new Polynome();
-            for (int q = 1; q < Coe.Count; q++)
+            for (int q = 1; q < Coefficients.Count; q++)
             {
-                p.Coe.Add(Coe[q].Multiply(new ComplexNumber() { RealPart = q }));
+                p.Coefficients.Add(Coefficients[q].Multiply(new ComplexNumber() { RealPart = q }));
             }
 
             return p;
@@ -34,13 +32,9 @@ namespace Mathematics
         /// <summary>
         /// Evaluates polynomial at given point
         /// </summary>
-        /// <param name="x">point of evaluation</param>
+        /// <param name="point">point of evaluation</param>
         /// <returns>y</returns>
-        public ComplexNumber Eval(double x)
-        {
-            var y = Eval(new ComplexNumber() { RealPart = x, ImaginaryPart = 0 });
-            return y;
-        }
+        public ComplexNumber Eval(double point) => Eval(new ComplexNumber() { RealPart = point, ImaginaryPart = 0 });
 
         /// <summary>
         /// Evaluates polynomial at given point
@@ -50,9 +44,9 @@ namespace Mathematics
         public ComplexNumber Eval(ComplexNumber x)
         {
             ComplexNumber s = ComplexNumber.Zero;
-            for (int i = 0; i < Coe.Count; i++)
+            for (int i = 0; i < Coefficients.Count; i++)
             {
-                ComplexNumber coef = Coe[i];
+                ComplexNumber coef = Coefficients[i];
                 ComplexNumber bx = x;
                 int power = i;
 
@@ -78,9 +72,9 @@ namespace Mathematics
         {
             string s = "";
             int i = 0;
-            for (; i < Coe.Count; i++)
+            for (; i < Coefficients.Count; i++)
             {
-                s += Coe[i];
+                s += Coefficients[i];
                 if (i > 0)
                 {
                     int j = 0;
@@ -89,7 +83,7 @@ namespace Mathematics
                         s += "x";
                     }
                 }
-                if (i + 1 < Coe.Count)
+                if (i + 1 < Coefficients.Count)
                     s += " + ";
             }
             return s;

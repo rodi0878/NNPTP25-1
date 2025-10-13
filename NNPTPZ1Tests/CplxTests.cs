@@ -65,9 +65,9 @@ namespace Mathematics.Tests
         public void AddTestPolynome()
         {
             Polynome poly = new Mathematics.Polynome();
-            poly.Coe.Add(new ComplexNumber() { RealPart = 1, ImaginaryPart = 0 });
-            poly.Coe.Add(new ComplexNumber() { RealPart = 0, ImaginaryPart = 0 });
-            poly.Coe.Add(new ComplexNumber() { RealPart = 1, ImaginaryPart = 0 });
+            poly.Coefficients.Add(new ComplexNumber() { RealPart = 1, ImaginaryPart = 0 });
+            poly.Coefficients.Add(new ComplexNumber() { RealPart = 0, ImaginaryPart = 0 });
+            poly.Coefficients.Add(new ComplexNumber() { RealPart = 1, ImaginaryPart = 0 });
             ComplexNumber result = poly.Eval(new ComplexNumber() { RealPart = 0, ImaginaryPart = 0 });
             var expected = new ComplexNumber() { RealPart = 1, ImaginaryPart = 0 };
             Assert.AreEqual(expected, result);
