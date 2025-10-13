@@ -13,14 +13,12 @@ namespace Mathematics
             ImaginaryPart = 0
         };
 
-        public ComplexNumber Multiply(ComplexNumber b)
+        public ComplexNumber Multiply(ComplexNumber multiplicand)
         {
-            ComplexNumber a = this;
-            // aRe*bRe + aRe*bIm*i + aIm*bRe*i + aIm*bIm*i*i
             return new ComplexNumber()
             {
-                RealPart = a.RealPart * b.RealPart - a.ImaginaryPart * b.ImaginaryPart,
-                ImaginaryPart = (float)(a.RealPart * b.ImaginaryPart + a.ImaginaryPart * b.RealPart)
+                RealPart = RealPart * multiplicand.RealPart - ImaginaryPart * multiplicand.ImaginaryPart,
+                ImaginaryPart = RealPart * multiplicand.ImaginaryPart + ImaginaryPart * multiplicand.RealPart
             };
         }
 
@@ -43,13 +41,12 @@ namespace Mathematics
             return Math.Atan(ImaginaryPart / RealPart);
         }
 
-        public ComplexNumber Subtract(ComplexNumber b)
+        public ComplexNumber Subtract(ComplexNumber subtrahend)
         {
-            ComplexNumber a = this;
             return new ComplexNumber()
             {
-                RealPart = a.RealPart - b.RealPart,
-                ImaginaryPart = a.ImaginaryPart - b.ImaginaryPart
+                RealPart = RealPart - subtrahend.RealPart,
+                ImaginaryPart = ImaginaryPart - subtrahend.ImaginaryPart
             };
         }
 
@@ -58,18 +55,17 @@ namespace Mathematics
             return $"({RealPart} + {ImaginaryPart}i)";
         }
 
-        internal ComplexNumber Divide(ComplexNumber b)
+        internal ComplexNumber Divide(ComplexNumber divisor)
         {
-            // (aRe + aIm*i) / (bRe + bIm*i)
-            // ((aRe + aIm*i) * (bRe - bIm*i)) / ((bRe + bIm*i) * (bRe - bIm*i))
-            //  bRe*bRe - bIm*bIm*i*i
-            var tmp = this.Multiply(new ComplexNumber() { RealPart = b.RealPart, ImaginaryPart = -b.ImaginaryPart });
-            var tmp2 = b.RealPart * b.RealPart + b.ImaginaryPart * b.ImaginaryPart;
+            var denominator = divisor.RealPart * divisor.RealPart + divisor.ImaginaryPart * divisor.ImaginaryPart;
+
+            var real = (RealPart * divisor.RealPart + ImaginaryPart * divisor.ImaginaryPart) / denominator;
+            var imaginary = (ImaginaryPart * divisor.RealPart - RealPart * divisor.ImaginaryPart) / denominator;
 
             return new ComplexNumber()
             {
-                RealPart = tmp.RealPart / tmp2,
-                ImaginaryPart = (float)(tmp.ImaginaryPart / tmp2)
+                RealPart = real,
+                ImaginaryPart = imaginary
             };
         }
 
