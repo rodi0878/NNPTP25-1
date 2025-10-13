@@ -113,7 +113,7 @@ namespace NNPTPZ1.Mathematics
         /// <returns>A string representing the complex number.</returns>
         public override string ToString()
         {
-            return $"({Real} + {Imaginary}i)";
+            return $"({Real} {(Imaginary >= 0 ? "+" : "-")} {Math.Abs(Imaginary)}i)";
         }
     }
 }
