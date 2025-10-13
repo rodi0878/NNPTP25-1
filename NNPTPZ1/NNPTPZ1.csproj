@@ -44,6 +44,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArgumentParser.cs" />
+    <Compile Include="FractalComponents\FractalParameters.cs" />
+    <Compile Include="FractalComponents\FractalGenerator.cs" />
+    <Compile Include="FractalComponents\FractalImageRenderer.cs" />
+    <Compile Include="FractalComponents\PixelResult.cs" />
+    <Compile Include="Mathematics\ComplexNumber.cs" />
+    <Compile Include="Mathematics\Polynomial.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
