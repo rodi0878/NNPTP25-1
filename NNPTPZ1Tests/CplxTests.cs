@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NNPTPZ1;
+using Mathematics;
 
 namespace NNPTPZ1.Mathematics.Tests
 {
@@ -16,19 +17,19 @@ namespace NNPTPZ1.Mathematics.Tests
         [TestMethod()]
         public void AddTest()
         {
-            Cplx a = new Cplx()
+            Complex a = new Complex()
             {
                 Real = 10,
                 Imaginary = 20
             };
-            Cplx b = new Cplx()
+            Complex b = new Complex()
             {
                 Real = 1,
                 Imaginary = 2
             };
 
-            Cplx actual = a.Add(b);
-            Cplx shouldBe = new Cplx()
+            Complex actual = a.Add(b);
+            Complex shouldBe = new Complex()
             {
                 Real = 11,
                 Imaginary = 22
@@ -43,13 +44,13 @@ namespace NNPTPZ1.Mathematics.Tests
             r2 = b.ToString();
             Assert.AreEqual(e2, r2);
 
-            a = new Cplx()
+            a = new Complex()
             {
                 Real = 1,
                 Imaginary = -1
             };
-            b = new Cplx() { Real = 0, Imaginary = 0 };
-            shouldBe = new Cplx() { Real = 1, Imaginary = -1 };
+            b = new Complex() { Real = 0, Imaginary = 0 };
+            shouldBe = new Complex() { Real = 1, Imaginary = -1 };
             actual = a.Add(b);
             Assert.AreEqual(shouldBe, actual);
 
@@ -65,18 +66,18 @@ namespace NNPTPZ1.Mathematics.Tests
         [TestMethod()]
         public void AddTestPolynome()
         {
-            Poly poly = new Mathematics.Poly();
-            poly.Coefficients.Add(new Cplx() { Real = 1, Imaginary = 0 });
-            poly.Coefficients.Add(new Cplx() { Real = 0, Imaginary = 0 });
-            poly.Coefficients.Add(new Cplx() { Real = 1, Imaginary = 0 });
-            Cplx result = poly.Eval(new Cplx() { Real = 0, Imaginary = 0 });
-            Cplx expected = new Cplx() { Real = 1, Imaginary = 0 };
+            Polynomial poly = new Polynomial();
+            poly.Coefficients.Add(new Complex() { Real = 1, Imaginary = 0 });
+            poly.Coefficients.Add(new Complex() { Real = 0, Imaginary = 0 });
+            poly.Coefficients.Add(new Complex() { Real = 1, Imaginary = 0 });
+            Complex result = poly.Eval(new Complex() { Real = 0, Imaginary = 0 });
+            Complex expected = new Complex() { Real = 1, Imaginary = 0 };
             Assert.AreEqual(expected, result);
-            result = poly.Eval(new Cplx() { Real = 1, Imaginary = 0 });
-            expected = new Cplx() { Real = 2, Imaginary = 0 };
+            result = poly.Eval(new Complex() { Real = 1, Imaginary = 0 });
+            expected = new Complex() { Real = 2, Imaginary = 0 };
             Assert.AreEqual(expected, result);
-            result = poly.Eval(new Cplx() { Real = 2, Imaginary = 0 });
-            expected = new Cplx() { Real = 5.0000000000, Imaginary = 0 };
+            result = poly.Eval(new Complex() { Real = 2, Imaginary = 0 });
+            expected = new Complex() { Real = 5.0000000000, Imaginary = 0 };
             Assert.AreEqual(expected, result);
 
             string r2 = poly.ToString();
