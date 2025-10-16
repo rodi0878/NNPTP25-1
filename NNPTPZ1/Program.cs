@@ -1,18 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using System.Drawing;
-using System.Drawing.Design;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing.Printing;
-using System.Drawing.Text;
-using System.Drawing.Drawing2D;
-using System.Linq.Expressions;
-using System.Threading;
 using NNPTPZ1.Mathematics;
 
 namespace NNPTPZ1
@@ -25,6 +13,14 @@ namespace NNPTPZ1
     {
         static void Main(string[] args)
         {
+            // Argument validation
+            if (args.Length < 7)
+            {
+                Console.WriteLine("Chyba: Očekáváno alespoň 7 argumentů.");
+                Console.WriteLine("Použití: NNPTPZ1 <šířka> <výška> <xmin> <xmax> <ymin> <ymax> <výstupní_soubor>");
+                Environment.Exit(1);
+            }
+
             int[] intargs = new int[2];
             for (int i = 0; i < intargs.Length; i++)
             {
