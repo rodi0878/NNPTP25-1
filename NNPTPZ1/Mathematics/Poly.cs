@@ -2,98 +2,96 @@
 
 namespace NNPTPZ1.Mathematics
 {
- public class Poly
+    public class Poly
+    {
+        /// <summary>
+        /// Coefficients list: a0, a1, a2, ... (index = power).
+        /// </summary>
+        public List<Cplx> CoefficientsList { get; set; }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public Poly() => CoefficientsList = new List<Cplx>();
+
+        public void Add(Cplx coe) =>
+            CoefficientsList.Add(coe);
+
+        /// <summary>
+        /// Derives this polynomial and creates a new one
+        /// </summary>
+        /// <returns>Derived polynomial</returns>
+        public Poly Derive()
         {
-            /// <summary>
-            /// Coe
-            /// </summary>
-            public List<Cplx> Coe { get; set; }
-
-            /// <summary>
-            /// Constructor
-            /// </summary>
-            public Poly() => Coe = new List<Cplx>();
-
-            public void Add(Cplx coe) =>
-                Coe.Add(coe);
-
-            /// <summary>
-            /// Derives this polynomial and creates new one
-            /// </summary>
-            /// <returns>Derivated polynomial</returns>
-            public Poly Derive()
+            Poly derived = new Poly();
+            for (int i = 1; i < CoefficientsList.Count; i++)
             {
-                Poly p = new Poly();
-                for (int q = 1; q < Coe.Count; q++)
-                {
-                    p.Coe.Add(Coe[q].Multiply(new Cplx() { Re = q }));
-                }
-
-                return p;
+                derived.CoefficientsList.Add(CoefficientsList[i].Multiply(new Cplx() { Re = i }));
             }
 
-            /// <summary>
-            /// Evaluates polynomial at given point
-            /// </summary>
-            /// <param name="x">point of evaluation</param>
-            /// <returns>y</returns>
-            public Cplx Eval(double x)
-            {
-                var y = Eval(new Cplx() { Re = x, Imaginari = 0 });
-                return y;
-            }
-
-            /// <summary>
-            /// Evaluates polynomial at given point
-            /// </summary>
-            /// <param name="x">point of evaluation</param>
-            /// <returns>y</returns>
-            public Cplx Eval(Cplx x)
-            {
-                Cplx s = Cplx.Zero;
-                for (int i = 0; i < Coe.Count; i++)
-                {
-                    Cplx coef = Coe[i];
-                    Cplx bx = x;
-                    int power = i;
-
-                    if (i > 0)
-                    {
-                        for (int j = 0; j < power - 1; j++)
-                            bx = bx.Multiply(x);
-
-                        coef = coef.Multiply(bx);
-                    }
-
-                    s = s.Add(coef);
-                }
-
-                return s;
-            }
-
-            /// <summary>
-            /// ToString
-            /// </summary>
-            /// <returns>String repr of polynomial</returns>
-            public override string ToString()
-            {
-                string s = "";
-                int i = 0;
-                for (; i < Coe.Count; i++)
-                {
-                    s += Coe[i];
-                    if (i > 0)
-                    {
-                        int j = 0;
-                        for (; j < i; j++)
-                        {
-                            s += "x";
-                        }
-                    }
-                    if (i+1<Coe.Count)
-                    s += " + ";
-                }
-                return s;
-            }
+            return derived;
         }
+
+        /// <summary>
+        /// Evaluates polynomial at given point
+        /// </summary>
+        /// <param name="x">point of evaluation</param>
+        /// <returns>y</returns>
+        public Cplx Eval(double x)
+        {
+            var y = Eval(new Cplx() { Re = x, Imaginari = 0 });
+            return y;
+        }
+
+        /// <summary>
+        /// Evaluates polynomial at given point
+        /// </summary>
+        /// <param name="x">point of evaluation</param>
+        /// <returns>y</returns>
+        public Cplx Eval(Cplx x)
+        {
+            Cplx sum = Cplx.Zero;
+            for (int power = 0; power < CoefficientsList.Count; power++)
+            {
+                Cplx term = CoefficientsList[power];
+                Cplx xPow = x;
+
+                if (power > 0)
+                {
+                    for (int j = 0; j < power - 1; j++)
+                        xPow = xPow.Multiply(x);
+
+                    term = term.Multiply(xPow);
+                }
+
+                sum = sum.Add(term);
+            }
+
+            return sum;
+        }
+
+        /// <summary>
+        /// String representation of polynomial
+        /// </summary>
+        public override string ToString()
+        {
+            string s = "";
+            int i = 0;
+            for (; i < CoefficientsList.Count; i++)
+            {
+                s += CoefficientsList[i];
+                if (i > 0)
+                {
+                    int j = 0;
+                    for (; j < i; j++)
+                    {
+                        s += "x";
+                    }
+                }
+                if (i + 1 < CoefficientsList.Count)
+                    s += " + ";
+            }
+            return s;
+        }
+    }
 }

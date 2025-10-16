@@ -66,9 +66,9 @@ namespace NNPTPZ1.Mathematics.Tests
         public void AddTestPolynome()
         {
             Poly poly = new Mathematics.Poly();
-            poly.Coe.Add(new Cplx() { Re = 1, Imaginari = 0 });
-            poly.Coe.Add(new Cplx() { Re = 0, Imaginari = 0 });
-            poly.Coe.Add(new Cplx() { Re = 1, Imaginari = 0 });
+            poly.CoefficientsList.Add(new Cplx() { Re = 1, Imaginari = 0 });
+            poly.CoefficientsList.Add(new Cplx() { Re = 0, Imaginari = 0 });
+            poly.CoefficientsList.Add(new Cplx() { Re = 1, Imaginari = 0 });
             Cplx result = poly.Eval(new Cplx() { Re = 0, Imaginari = 0 });
             var expected = new Cplx() { Re = 1, Imaginari = 0 };
             Assert.AreEqual(expected, result);
