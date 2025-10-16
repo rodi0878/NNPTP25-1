@@ -17,8 +17,6 @@ namespace Mathematics
 
         public Polynomial() => Coefficients = new List<Complex>();
         
-        public void Add(Complex coe) =>
-            Coefficients.Add(coe); 
 
         /// <summary>
         /// Derives this polynomial and creates new one
@@ -34,14 +32,6 @@ namespace Mathematics
 
             return p;
         }
-
-        /// <summary>
-        /// Evaluates polynomial at given point
-        /// </summary>
-        /// <param name="x">point of evaluation</param>
-        /// <returns>y</returns>
-        public Complex Eval(double x) => Eval(new Complex() { Real = x, Imaginary = 0 });
-
 
         /// <summary>
         /// Evaluates polynomial at given point

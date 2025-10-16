@@ -8,35 +8,21 @@ namespace Mathematics
         public double Real { get; set; }
         public double Imaginary { get; set; }
 
-        public override bool Equals(object obj)
-        {
-            if (obj is Complex)
-            {
-                Complex x = obj as Complex;
-                return x.Real == Real && x.Imaginary == Imaginary;
-            }
-            return base.Equals(obj);
-        }
-
         public readonly static Complex Zero = new Complex()
         {
             Real = 0,
             Imaginary = 0
         };
 
-        public Complex Multiply(Complex b)
+        public Complex Multiply(Complex other)
         {
             Complex a = this;
             // aRe*bRe + aRe*bIm*i + aIm*bRe*i + aIm*bIm*i*i
             return new Complex()
             {
-                Real = a.Real * b.Real - a.Imaginary * b.Imaginary,
-                Imaginary = (float)(a.Real * b.Imaginary + a.Imaginary * b.Real)
+                Real = a.Real * other.Real - a.Imaginary * other.Imaginary,
+                Imaginary = (float)(a.Real * other.Imaginary + a.Imaginary * other.Real)
             };
-        }
-        public double GetAbS()
-        {
-            return Math.Sqrt(Real * Real + Imaginary * Imaginary);
         }
 
         public Complex Add(Complex b)
@@ -48,10 +34,7 @@ namespace Mathematics
                 Imaginary = a.Imaginary + b.Imaginary
             };
         }
-        public double GetAngleInDegrees()
-        {
-            return Math.Atan(Imaginary / Real);
-        }
+
         public Complex Subtract(Complex b)
         {
             Complex a = this;
