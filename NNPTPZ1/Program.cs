@@ -29,7 +29,7 @@ namespace NNPTPZ1
             double xstep = (xmax - xmin) / imageSize.Width;
             double ystep = (ymax - ymin) / imageSize.Height;
 
-            List<Complex> koreny = new List<Complex>();
+            List<Complex> roots = new List<Complex>();
             // TODO: poly should be parameterised?
             Polynomial polynomial = new Polynomial(new List<Complex>
             {
@@ -39,7 +39,6 @@ namespace NNPTPZ1
                 new Complex() { Real = 1 }
             });
 
-            Polynomial polyTmp = polynomial;
             Polynomial polyDerivative = polynomial.Derive();
 
             Console.WriteLine(polynomial);
@@ -56,24 +55,24 @@ namespace NNPTPZ1
                 for (int pixelX = 0; pixelX < imageSize.Width; pixelX++)
                 {
                     // find "world" coordinates of pixel
-                    double y = ymin + pixelY * ystep;
-                    double x = xmin + pixelX * xstep;
+                    double worldY = ymin + pixelY * ystep;
+                    double worldX = xmin + pixelX * xstep;
 
-                    Complex complexCoords = new Complex()
+                    Complex complexWorldCoords = new Complex()
                     {
-                        Real = x,
-                        Imaginary = y
+                        Real = worldX,
+                        Imaginary = worldY
                     };
 
-                    complexCoords.Real = complexCoords.Real == 0 ? 0.0001 : complexCoords.Real;
-                    complexCoords.Imaginary = complexCoords.Imaginary == 0 ? 0.0001 : complexCoords.Imaginary;
+                    complexWorldCoords.Real = complexWorldCoords.Real == 0 ? 0.0001 : complexWorldCoords.Real;
+                    complexWorldCoords.Imaginary = complexWorldCoords.Imaginary == 0 ? 0.0001 : complexWorldCoords.Imaginary;
 
                     for (int q = 0; q < 30;)
                     {
-                        Complex diff = polynomial.Eval(complexCoords).Divide(polyDerivative.Eval(complexCoords));
-                        complexCoords = complexCoords.Subtract(diff);
+                        Complex newtonStep = polynomial.Eval(complexWorldCoords).Divide(polyDerivative.Eval(complexWorldCoords));
+                        complexWorldCoords = complexWorldCoords.Subtract(newtonStep);
 
-                        if (Math.Pow(diff.Real, 2) + Math.Pow(diff.Imaginary, 2) < 0.5)
+                        if (Math.Pow(newtonStep.Real, 2) + Math.Pow(newtonStep.Imaginary, 2) < 0.5)
                         {
                             q++;
                         }
@@ -81,23 +80,23 @@ namespace NNPTPZ1
 
                     // find solution root number
                     bool known = false;
-                    int pocetKorenu = 0;
-                    for (int w = 0; w < koreny.Count; w++)
+                    int rootCount = 0;
+                    for (int w = 0; w < roots.Count; w++)
                     {
-                        if (Math.Pow(complexCoords.Real - koreny[w].Real, 2) + Math.Pow(complexCoords.Imaginary - koreny[w].Imaginary, 2) <= 0.01)
+                        if (Math.Pow(complexWorldCoords.Real - roots[w].Real, 2) + Math.Pow(complexWorldCoords.Imaginary - roots[w].Imaginary, 2) <= 0.01)
                         {
                             known = true;
-                            pocetKorenu = w;
+                            rootCount = w;
                         }
                     }
                     if (!known)
                     {
-                        koreny.Add(complexCoords);
-                        pocetKorenu = koreny.Count;
+                        roots.Add(complexWorldCoords);
+                        rootCount = roots.Count;
                     }
 
                     // colorize pixel according to root number
-                    Color pixelColor = colorPalete[pocetKorenu % colorPalete.Length];
+                    Color pixelColor = colorPalete[rootCount % colorPalete.Length];
                     output.SetPixel(pixelX, pixelY, pixelColor);
                 }
             }
