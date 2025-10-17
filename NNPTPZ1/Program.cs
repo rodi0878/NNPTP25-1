@@ -35,15 +35,10 @@ namespace NNPTPZ1
             double ystep = (ymax - ymin) / intargs[1];
 
             List<ComplexNumber> koreny = new List<ComplexNumber>();
-            // TODO: poly should be parameterised?
-            Poly p = new Poly();
-            p.Coe.Add(new ComplexNumber(1,0));
-            p.Coe.Add(ComplexNumber.Zero);
-            p.Coe.Add(ComplexNumber.Zero);
-            //p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(new ComplexNumber(1, 0));
-            Poly ptmp = p;
-            Poly pd = p.Derive();
+            ComplexNumber [] koeficienty = { new ComplexNumber(1, 0), ComplexNumber.Zero, ComplexNumber.Zero, new ComplexNumber(1, 0)};
+            Polynomial p = new Polynomial(koeficienty);
+            Polynomial ptmp = p;
+            Polynomial pd = p.Derive();
 
             Console.WriteLine(p);
             Console.WriteLine(pd);
@@ -78,7 +73,7 @@ namespace NNPTPZ1
                     float it = 0;
                     for (int q = 0; q< 30; q++)
                     {
-                        var diff = p.Eval(ox) / pd.Eval(ox);
+                        var diff = p.Evaluate(ox) / pd.Evaluate(ox);
                         ox = ox - diff;
 
                         //Console.WriteLine($"{q} {ox} -({diff})");
