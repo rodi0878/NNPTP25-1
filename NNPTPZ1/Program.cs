@@ -85,7 +85,7 @@ namespace NNPTPZ1
 
         private static void CreateImage()
         {
-            // for every pixel in image...
+            // Iterate over all pixels in the image
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
@@ -108,7 +108,7 @@ namespace NNPTPZ1
 
         private static ComplexNumber GetComplexForPixel(int i, int j)
         {
-            // find "world" coordinates of pixel
+            // Maps a pixel position to its corresponding point in the complex plane
             double y = yMin + i * yStep;
             double x = xMin + j * xStep;
 
@@ -151,7 +151,7 @@ namespace NNPTPZ1
                     return rootIndex;
             }
 
-            // nový kořen
+            // New Root
             roots.Add(complex);
             return roots.Count - 1;
         }
