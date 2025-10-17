@@ -32,7 +32,7 @@ namespace NNPTPZ1.Mathematics.Tests
             Assert.AreEqual(e2, r2);
 
             a = new ComplexNumber(1, -1);
-            b = new ComplexNumber(0,1);
+            b = new ComplexNumber(0,0);
             shouldBe = new ComplexNumber(1, -1);
             actual = a + b;
             Assert.AreEqual(shouldBe, actual);

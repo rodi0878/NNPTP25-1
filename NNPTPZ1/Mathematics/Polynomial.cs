@@ -53,26 +53,23 @@ namespace NNPTPZ1.Mathematics
 
         public override string ToString()
         {
-            var sb = new StringBuilder();
-            for (int i = Coefficients.Count - 1; i >= 0; i--)
+            string s = "";
+            int i = 0;
+            for (; i < Coefficients.Count; i++)
             {
-                var coeff = Coefficients[i];
-                // Ignorujeme členy s nulovým koeficientem
-                if (coeff.RealPart == 0 && coeff.ImaginaryPart == 0) continue;
-
-                if (sb.Length > 0)
-                {
-                    sb.Append(" + ");
-                }
-
-                sb.Append(coeff);
-
+                s += Coefficients[i];
                 if (i > 0)
                 {
-                    sb.Append($"x^{i}");
+                    int j = 0;
+                    for (; j < i; j++)
+                    {
+                        s += "x";
+                    }
                 }
+                if (i + 1 < Coefficients.Count)
+                    s += " + ";
             }
-            return sb.ToString();
+            return s;
         }
     }
 }
