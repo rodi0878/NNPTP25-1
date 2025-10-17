@@ -45,6 +45,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="Cplx.cs" />
+    <Compile Include="Poly.cs" />
+    <Compile Include="FractalRenderer.cs" />
+    <Compile Include="BMPExporter.cs" />
+    <Compile Include="ArgumentProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
