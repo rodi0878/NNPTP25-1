@@ -30,7 +30,7 @@ namespace Mathematics
             Poly p = new Poly();
             for (int q = 1; q < Coe.Count; q++)
             {
-                p.Coe.Add(Coe[q].Multiply(new ComplexNumber() { RealPart = q }));
+                p.Coe.Add(Coe[q] * (new ComplexNumber(q, 0)));
             }
 
             return p;
@@ -43,7 +43,7 @@ namespace Mathematics
         /// <returns>y</returns>
         public ComplexNumber Eval(double x)
         {
-            var y = Eval(new ComplexNumber() { RealPart = x, ImaginaryPart = 0 });
+            var y = Eval(new ComplexNumber(x,0));
             return y;
         }
 
@@ -64,12 +64,12 @@ namespace Mathematics
                 if (i > 0)
                 {
                     for (int j = 0; j < power - 1; j++)
-                        bx = bx.Multiply(x);
+                        bx = bx * x;
 
-                    coef = coef.Multiply(bx);
+                    coef = coef * bx;
                 }
 
-                s = s.Add(coef);
+                s = s + coef;
             }
 
             return s;

@@ -37,11 +37,11 @@ namespace NNPTPZ1
             List<ComplexNumber> koreny = new List<ComplexNumber>();
             // TODO: poly should be parameterised?
             Poly p = new Poly();
-            p.Coe.Add(new ComplexNumber() { RealPart = 1 });
+            p.Coe.Add(new ComplexNumber(1,0));
             p.Coe.Add(ComplexNumber.Zero);
             p.Coe.Add(ComplexNumber.Zero);
             //p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(new ComplexNumber() { RealPart = 1 });
+            p.Coe.Add(new ComplexNumber(1, 0));
             Poly ptmp = p;
             Poly pd = p.Derive();
 
@@ -65,16 +65,12 @@ namespace NNPTPZ1
                     double y = ymin + i * ystep;
                     double x = xmin + j * xstep;
 
-                    ComplexNumber ox = new ComplexNumber()
-                    {
-                        RealPart = x,
-                        ImaginaryPart = (float)(y)
-                    };
+                    ComplexNumber ox = new ComplexNumber(x,y);
 
                     if (ox.RealPart == 0)
-                        ox.RealPart = 0.0001;
+                        ox = new ComplexNumber(0.0001, ox.ImaginaryPart);
                     if (ox.ImaginaryPart == 0)
-                        ox.ImaginaryPart = 0.0001f;
+                        ox = new ComplexNumber(ox.RealPart, 0.0001);
 
                     //Console.WriteLine(ox);
 
@@ -82,8 +78,8 @@ namespace NNPTPZ1
                     float it = 0;
                     for (int q = 0; q< 30; q++)
                     {
-                        var diff = p.Eval(ox).Divide(pd.Eval(ox));
-                        ox = ox.Subtract(diff);
+                        var diff = p.Eval(ox) / pd.Eval(ox);
+                        ox = ox - diff;
 
                         //Console.WriteLine($"{q} {ox} -({diff})");
                         if (Math.Pow(diff.RealPart, 2) + Math.Pow(diff.ImaginaryPart, 2) >= 0.5)
