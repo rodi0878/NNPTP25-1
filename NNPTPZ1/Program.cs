@@ -11,124 +11,175 @@ namespace NNPTPZ1
     /// </summary>
     class Program
     {
+        private const int MaxIterations = 30;
+        private const double ConvergenceThreshold = 0.5;
+        private const double RootMatchThreshold = 0.01;
+        private const double ZeroValueReplacement = 0.0001;
+        private const int ColorDimmingFactor = 2;
+
+        private static readonly Color[] RootColors =
+        {
+            Color.Red, Color.Blue, Color.Green, Color.Yellow,
+            Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
+        };
+
         static void Main(string[] args)
         {
-            int[] intargs = new int[2];
-            for (int i = 0; i < intargs.Length; i++)
+            var config = ParseArguments(args);
+            var polynomial = CreatePolynomial();
+            var derivative = polynomial.Derive();
+
+            Console.WriteLine($"Polynomial: {polynomial}");
+            Console.WriteLine($"Derivative: {derivative}");
+
+            var fractal = GenerateFractal(config, polynomial, derivative);
+            fractal.Save(config.OutputPath);
+        }
+
+        private static FractalConfig ParseArguments(string[] args)
+        {
+            if (args.Length < 7)
+                throw new ArgumentException("Not enough arguments.");
+
+            return new FractalConfig
             {
-                intargs[i] = int.Parse(args[i]);
-            }
-            double[] doubleargs = new double[4];
-            for (int i = 0; i < doubleargs.Length; i++)
+                Width = int.Parse(args[0]),
+                Height = int.Parse(args[1]),
+                XMin = double.Parse(args[2]),
+                XMax = double.Parse(args[3]),
+                YMin = double.Parse(args[4]),
+                YMax = double.Parse(args[5]),
+                OutputPath = args[6]
+            };
+        }
+
+        private static Polynomial CreatePolynomial()
+        {
+            var coefficients = new ComplexNumber[]
             {
-                doubleargs[i] = double.Parse(args[i + 2]);
-            }
-            string output = args[6];
-            // TODO: add parameters from args?
-            Bitmap bmp = new Bitmap(intargs[0], intargs[1]);
-            double xmin = doubleargs[0];
-            double xmax = doubleargs[1];
-            double ymin = doubleargs[2];
-            double ymax = doubleargs[3];
-
-            double xstep = (xmax - xmin) / intargs[0];
-            double ystep = (ymax - ymin) / intargs[1];
-
-            List<ComplexNumber> koreny = new List<ComplexNumber>();
-            ComplexNumber [] koeficienty = { new ComplexNumber(1, 0), ComplexNumber.Zero, ComplexNumber.Zero, new ComplexNumber(1, 0)};
-            Polynomial p = new Polynomial(koeficienty);
-            Polynomial ptmp = p;
-            Polynomial pd = p.Derive();
-
-            Console.WriteLine(p);
-            Console.WriteLine(pd);
-
-            var clrs = new Color[]
-            {
-                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
+                new ComplexNumber(1, 0),  // z^3
+                ComplexNumber.Zero,        // z^2
+                ComplexNumber.Zero,        // z^1
+                new ComplexNumber(-1, 0)   // konstanta
             };
 
-            var maxid = 0;
+            return new Polynomial(coefficients);
+        }
 
-            // TODO: cleanup!!!
-            // for every pixel in image...
-            for (int i = 0; i < intargs[0]; i++)
+        private static Bitmap GenerateFractal(FractalConfig config, Polynomial polynomial, Polynomial derivative)
+        {
+            var bitmap = new Bitmap(config.Width, config.Height);
+            var roots = new List<ComplexNumber>();
+
+            double xStep = (config.XMax - config.XMin) / config.Width;
+            double yStep = (config.YMax - config.YMin) / config.Height;
+
+            for (int i = 0; i < config.Height; i++)
             {
-                for (int j = 0; j < intargs[1]; j++)
+                for (int j = 0; j < config.Width; j++)
                 {
-                    // find "world" coordinates of pixel
-                    double y = ymin + i * ystep;
-                    double x = xmin + j * xstep;
+                    var worldCoord = PixelToWorld(j, i, config, xStep, yStep);
+                    var result = FindRoot(worldCoord, polynomial, derivative);
+                    var rootId = GetOrAddRoot(result.Root, roots);
+                    var color = CalculateColor(rootId, result.Iterations);
 
-                    ComplexNumber ox = new ComplexNumber(x,y);
-
-                    if (ox.RealPart == 0)
-                        ox = new ComplexNumber(0.0001, ox.ImaginaryPart);
-                    if (ox.ImaginaryPart == 0)
-                        ox = new ComplexNumber(ox.RealPart, 0.0001);
-
-                    //Console.WriteLine(ox);
-
-                    // find solution of equation using newton's iteration
-                    float it = 0;
-                    for (int q = 0; q< 30; q++)
-                    {
-                        var diff = p.Evaluate(ox) / pd.Evaluate(ox);
-                        ox = ox - diff;
-
-                        //Console.WriteLine($"{q} {ox} -({diff})");
-                        if (Math.Pow(diff.RealPart, 2) + Math.Pow(diff.ImaginaryPart, 2) >= 0.5)
-                        {
-                            q--;
-                        }
-                        it++;
-                    }
-
-                    //Console.ReadKey();
-
-                    // find solution root number
-                    var known = false;
-                    var id = 0;
-                    for (int w = 0; w <koreny.Count;w++)
-                    {
-                        if (Math.Pow(ox.RealPart- koreny[w].RealPart, 2) + Math.Pow(ox.ImaginaryPart - koreny[w].ImaginaryPart, 2) <= 0.01)
-                        {
-                            known = true;
-                            id = w;
-                        }
-                    }
-                    if (!known)
-                    {
-                        koreny.Add(ox);
-                        id = koreny.Count;
-                        maxid = id + 1; 
-                    }
-
-                    // colorize pixel according to root number
-                    //int vv = id;
-                    //int vv = id * 50 + (int)it*5;
-                    var vv = clrs[id % clrs.Length];
-                    vv = Color.FromArgb(vv.R, vv.G, vv.B);
-                    vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R-(int)it*2), 255), Math.Min(Math.Max(0, vv.G - (int)it*2), 255), Math.Min(Math.Max(0, vv.B - (int)it*2), 255));
-                    //vv = Math.Min(Math.Max(0, vv), 255);
-                    bmp.SetPixel(j, i, vv);
-                    //bmp.SetPixel(j, i, Color.FromArgb(vv, vv, vv));
+                    bitmap.SetPixel(j, i, color);
                 }
             }
 
-            // TODO: delete I suppose...
-            //for (int i = 0; i < 300; i++)
-            //{
-            //    for (int j = 0; j < 300; j++)
-            //    {
-            //        Color c = bmp.GetPixel(j, i);
-            //        int nv = (int)Math.Floor(c.R * (255.0 / maxid));
-            //        bmp.SetPixel(j, i, Color.FromArgb(nv, nv, nv));
-            //    }
-            //}
-
-                    bmp.Save(output ?? "../../../out.png");
-            //Console.ReadKey();
+            return bitmap;
         }
+
+        private static ComplexNumber PixelToWorld(int pixelX, int pixelY, FractalConfig config, double xStep, double yStep)
+        {
+            double x = config.XMin + pixelX * xStep;
+            double y = config.YMin + pixelY * yStep;
+
+            if (x == 0) x = ZeroValueReplacement;
+            if (y == 0) y = ZeroValueReplacement;
+
+            return new ComplexNumber(x, y);
+        }
+
+        private static NewtonResult FindRoot(ComplexNumber initialGuess, Polynomial polynomial, Polynomial derivative)
+        {
+            var z = initialGuess;
+            int iterations = 0;
+
+            for (int i = 0; i < MaxIterations; i++)
+            {
+                var diff = polynomial.Evaluate(z) / derivative.Evaluate(z);
+                z = z - diff;
+                iterations++;
+
+                if (GetMagnitudeSquared(diff) >= ConvergenceThreshold)
+                {
+                    i--;
+                }
+            }
+
+            return new NewtonResult { Root = z, Iterations = iterations };
+        }
+
+        private static int GetOrAddRoot(ComplexNumber root, List<ComplexNumber> knownRoots)
+        {
+            for (int i = 0; i < knownRoots.Count; i++)
+            {
+                if (GetDistanceSquared(root, knownRoots[i]) <= RootMatchThreshold)
+                {
+                    return i;
+                }
+            }
+
+            knownRoots.Add(root);
+            return knownRoots.Count - 1;
+        }
+
+        private static Color CalculateColor(int rootId, int iterations)
+        {
+            var baseColor = RootColors[rootId % RootColors.Length];
+
+            int dimming = iterations * ColorDimmingFactor;
+
+            return Color.FromArgb(
+                ClampColorValue(baseColor.R - dimming),
+                ClampColorValue(baseColor.G - dimming),
+                ClampColorValue(baseColor.B - dimming)
+            );
+        }
+
+        private static double GetMagnitudeSquared(ComplexNumber z)
+        {
+            return z.RealPart * z.RealPart + z.ImaginaryPart * z.ImaginaryPart;
+        }
+
+        private static double GetDistanceSquared(ComplexNumber z1, ComplexNumber z2)
+        {
+            double realDiff = z1.RealPart - z2.RealPart;
+            double imagDiff = z1.ImaginaryPart - z2.ImaginaryPart;
+            return realDiff * realDiff + imagDiff * imagDiff;
+        }
+
+        private static int ClampColorValue(int value)
+        {
+            return Math.Min(Math.Max(0, value), 255);
+        }
+    }
+
+    class FractalConfig
+    {
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public double XMin { get; set; }
+        public double XMax { get; set; }
+        public double YMin { get; set; }
+        public double YMax { get; set; }
+        public string OutputPath { get; set; }
+    }
+
+    struct NewtonResult
+    {
+        public ComplexNumber Root { get; set; }
+        public int Iterations { get; set; }
     }
 }
