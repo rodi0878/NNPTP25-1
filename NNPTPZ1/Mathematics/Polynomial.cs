@@ -43,7 +43,6 @@ namespace Mathematics
         /// <returns>The result of the evaluation.</returns>
         public ComplexNumber Evaluate(ComplexNumber x)
         {
-            // Aplikace Hornerova schématu
             ComplexNumber result = ComplexNumber.Zero;
             for (int i = Coefficients.Count - 1; i >= 0; i--)
             {
