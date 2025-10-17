@@ -10,10 +10,10 @@ namespace NNPTPZ1.Mathematics
         public double RealPart { get;}
         public double ImaginaryPart { get;}
         public static ComplexNumber Zero { get; } = new ComplexNumber(0, 0);
-        public ComplexNumber(double real, double imaginary)
+        public ComplexNumber(double realPart, double imaginaryPart)
         {
-            RealPart = real;
-            ImaginaryPart = imaginary;
+            RealPart = realPart;
+            ImaginaryPart = imaginaryPart;
         }
 
         public override bool Equals(object obj)
