@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mathematics
+namespace NNPTPZ1.Mathematics
 {
     /// <summary>
     /// Represents an immutable complex number.

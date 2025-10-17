@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace Mathematics
+namespace NNPTPZ1.Mathematics
 {
     /// <summary>
     /// Represents an immutable polynomial with complex coefficients.

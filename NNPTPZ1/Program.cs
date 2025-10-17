@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Mathematics;
+using NNPTPZ1.Mathematics;
 
 namespace NNPTPZ1
 {
