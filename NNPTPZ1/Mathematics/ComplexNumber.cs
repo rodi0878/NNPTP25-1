@@ -25,6 +25,16 @@ namespace Mathematics
             }
             return base.Equals(obj);
         }
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + RealPart.GetHashCode();
+                hash = hash * 23 + ImaginaryPart.GetHashCode();
+                return hash;
+            }
+        }
 
         public double Abs()
         {
