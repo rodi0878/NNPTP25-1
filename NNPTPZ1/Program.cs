@@ -90,62 +90,13 @@ namespace NNPTPZ1
             {
                 for (int j = 0; j < height; j++)
                 {
-                    // find "world" coordinates of pixel
-                    double y = yMin + i * yStep;
-                    double x = xMin + j * xStep;
+                    var complex = GetComplexForPixel(i, j);
+                    float iterations = ApplyNewtonIteration(ref complex);
 
-                    ComplexNumber complex = new ComplexNumber()
-                    {
-                        Real = x,
-                        Imaginary = (float)(y)
-                    };
+                    int rootId = GetRootId(complex);
+                    var color = GetPixelColor(rootId, iterations);
 
-                    if (complex.Real == 0)
-                        complex.Real = 0.0001;
-                    if (complex.Imaginary == 0)
-                        complex.Imaginary = 0.0001f;
-
-
-                    // find solution of equation using newton's iteration
-                    float iterations = 0;
-                    for (int step = 0; step < 30; step++)
-                    {
-                        var diff = function.Evaluate(complex) / derivative.Evaluate(complex);
-                        complex -= diff;
-
-                        if (Math.Pow(diff.Real, 2) + Math.Pow(diff.Imaginary, 2) >= 0.5)
-                        {
-                            step--;
-                        }
-                        iterations++;
-                    }
-
-
-                    // find solution root number
-                    var rootIsKnown = false;
-                    var rootId = 0;
-                    for (int rootIndex = 0; rootIndex < roots.Count; rootIndex++)
-                    {
-                        if (Math.Pow(complex.Real - roots[rootIndex].Real, 2) + Math.Pow(complex.Imaginary - roots[rootIndex].Imaginary, 2) <= 0.01)
-                        {
-                            rootIsKnown = true;
-                            rootId = rootIndex;
-                        }
-                    }
-                    if (!rootIsKnown)
-                    {
-                        roots.Add(complex);
-                        rootId = roots.Count;
-                    }
-
-                    // colorize pixel according to root number
-                    var shadedColor = colors[rootId % colors.Length];
-                    shadedColor = Color.FromArgb(shadedColor.R, shadedColor.G, shadedColor.B);
-                    shadedColor = Color.FromArgb(
-                        Math.Min(Math.Max(0, shadedColor.R - (int)iterations * 2), 255),
-                        Math.Min(Math.Max(0, shadedColor.G - (int)iterations * 2), 255),
-                        Math.Min(Math.Max(0, shadedColor.B - (int)iterations * 2), 255));
-                    image.SetPixel(j, i, shadedColor);
+                    image.SetPixel(j, i, color);
                 }
             }
         }
@@ -153,6 +104,72 @@ namespace NNPTPZ1
         private static void SaveImage()
         {
             image.Save(outputFileName ?? "../../../out.png");
+        }
+
+        private static ComplexNumber GetComplexForPixel(int i, int j)
+        {
+            // find "world" coordinates of pixel
+            double y = yMin + i * yStep;
+            double x = xMin + j * xStep;
+
+            var complex = new ComplexNumber
+            {
+                Real = x == 0 ? 0.0001 : x,
+                Imaginary = (float)(y == 0 ? 0.0001f : y)
+            };
+
+            return complex;
+        }
+
+        private static float ApplyNewtonIteration(ref ComplexNumber complex)
+        {
+            float iterations = 0;
+
+            for (int step = 0; step < 30; step++)
+            {
+                var diff = function.Evaluate(complex) / derivative.Evaluate(complex);
+                complex -= diff;
+
+                if (Math.Pow(diff.Real, 2) + Math.Pow(diff.Imaginary, 2) >= 0.5)
+                    step--;
+
+                iterations++;
+            }
+
+            return iterations;
+        }
+
+        private static int GetRootId(ComplexNumber complex)
+        {
+            for (int rootIndex = 0; rootIndex < roots.Count; rootIndex++)
+            {
+                double distanceSquared =
+                    Math.Pow(complex.Real - roots[rootIndex].Real, 2) +
+                    Math.Pow(complex.Imaginary - roots[rootIndex].Imaginary, 2);
+
+                if (distanceSquared <= 0.01)
+                    return rootIndex;
+            }
+
+            // nový kořen
+            roots.Add(complex);
+            return roots.Count - 1;
+        }
+
+        private static Color GetPixelColor(int rootId, float iterations)
+        {
+            var baseColor = colors[rootId % colors.Length];
+
+            int r = Clamp(baseColor.R - (int)iterations * 2);
+            int g = Clamp(baseColor.G - (int)iterations * 2);
+            int b = Clamp(baseColor.B - (int)iterations * 2);
+
+            return Color.FromArgb(r, g, b);
+        }
+
+        private static int Clamp(int value)
+        {
+            return Math.Min(Math.Max(0, value), 255);
         }
     }
 }
