@@ -9,15 +9,8 @@ namespace Mathematics
     /// </summary>
     public class Polynomial
     {
-        /// <summary>
-        /// Coefficients of the polynomial, starting from the zero-degree term (a_0).
-        /// </summary>
         public IReadOnlyList<ComplexNumber> Coefficients { get; }
 
-        /// <summary>
-        /// Creates a new polynomial from the given coefficients.
-        /// </summary>
-        /// <param name="coefficients">Coefficients starting from a_0, a_1, ...</param>
         public Polynomial(params ComplexNumber[] coefficients)
         {
             Coefficients = coefficients?.Length > 0 ? new List<ComplexNumber>(coefficients) : new List<ComplexNumber> { ComplexNumber.Zero };
@@ -59,9 +52,6 @@ namespace Mathematics
             return result;
         }
 
-        /// <summary>
-        /// Provides a clean, readable string representation of the polynomial.
-        /// </summary>
         public override string ToString()
         {
             var sb = new StringBuilder();
