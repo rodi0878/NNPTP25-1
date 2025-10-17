@@ -2,6 +2,9 @@
 
 namespace Mathematics
 {
+    /// <summary>
+    /// Represents an immutable complex number.
+    /// </summary>
     public readonly struct ComplexNumber
     {
         public double RealPart { get;}
