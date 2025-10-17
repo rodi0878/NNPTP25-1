@@ -11,14 +11,14 @@ namespace Mathematics
         /// <summary>
         /// Coe
         /// </summary>
-        public List<Cplx> Coe { get; set; }
+        public List<ComplexNumber> Coe { get; set; }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public Poly() => Coe = new List<Cplx>();
+        public Poly() => Coe = new List<ComplexNumber>();
 
-        public void Add(Cplx coe) =>
+        public void Add(ComplexNumber coe) =>
             Coe.Add(coe);
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Mathematics
             Poly p = new Poly();
             for (int q = 1; q < Coe.Count; q++)
             {
-                p.Coe.Add(Coe[q].Multiply(new Cplx() { Re = q }));
+                p.Coe.Add(Coe[q].Multiply(new ComplexNumber() { RealPart = q }));
             }
 
             return p;
@@ -41,9 +41,9 @@ namespace Mathematics
         /// </summary>
         /// <param name="x">point of evaluation</param>
         /// <returns>y</returns>
-        public Cplx Eval(double x)
+        public ComplexNumber Eval(double x)
         {
-            var y = Eval(new Cplx() { Re = x, Imaginari = 0 });
+            var y = Eval(new ComplexNumber() { RealPart = x, ImaginaryPart = 0 });
             return y;
         }
 
@@ -52,13 +52,13 @@ namespace Mathematics
         /// </summary>
         /// <param name="x">point of evaluation</param>
         /// <returns>y</returns>
-        public Cplx Eval(Cplx x)
+        public ComplexNumber Eval(ComplexNumber x)
         {
-            Cplx s = Cplx.Zero;
+            ComplexNumber s = ComplexNumber.Zero;
             for (int i = 0; i < Coe.Count; i++)
             {
-                Cplx coef = Coe[i];
-                Cplx bx = x;
+                ComplexNumber coef = Coe[i];
+                ComplexNumber bx = x;
                 int power = i;
 
                 if (i > 0)
