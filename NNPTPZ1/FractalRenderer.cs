@@ -20,10 +20,10 @@ namespace NNPTPZ1 {
 	    double xstep = (argumentProcessor.Xmax - argumentProcessor.Xmin) / argumentProcessor.X;
 	    double ystep = (argumentProcessor.Ymax - argumentProcessor.Ymin) / argumentProcessor.Y;
 
-	    List<Cplx> koreny = new List<Cplx>();
-	    Poly p = new Poly(new Cplx() { Re = 1 }, Cplx.Zero, Cplx.Zero, new Cplx() { Re = 1 });
-	    Poly ptmp = p;
-	    Poly pd = p.Derive();
+	    List<ComplexNumber> koreny = new List<ComplexNumber>();
+	    Polynomial p = new Polynomial(new ComplexNumber() { Re = 1 }, ComplexNumber.Zero, ComplexNumber.Zero, new ComplexNumber() { Re = 1 });
+	    Polynomial ptmp = p;
+	    Polynomial pd = p.Derive();
 
 	    //Logging should be used instead
 	    //Console.WriteLine(p);
@@ -40,7 +40,7 @@ namespace NNPTPZ1 {
 		    double y = argumentProcessor.Ymin + i * ystep;
 		    double x = argumentProcessor.Xmin + j * xstep;
 
-		    Cplx ox = new Cplx()
+		    ComplexNumber ox = new ComplexNumber()
 		    {
 			Re = x,
 			Imaginari = (float)(y)

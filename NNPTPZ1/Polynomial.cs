@@ -8,41 +8,41 @@ using System.Threading;
 
 namespace Mathematics
 {
-    public class Poly
+    public class Polynomial
     {
 	/// <summary>
-	/// Coe
+	/// Coefficient
 	/// </summary>
-	public List<Cplx> Coe { get; set; }
+	public List<ComplexNumber> Coefficient { get; set; }
 
 	/// <summary>
 	/// Constructor
 	/// </summary>
-	public Poly() => Coe = new List<Cplx>();
+	public Polynomial() => Coefficient = new List<ComplexNumber>();
 
 	///Overloaded constructor for parametrization
-	public Poly(Cplx arg1, Cplx arg2, Cplx arg3, Cplx arg4) {
-	    Coe = new List<Cplx>();
-	    this.Coe.Add(arg1);
-	    this.Coe.Add(arg2);
-	    this.Coe.Add(arg3);
-	    this.Coe.Add(arg4);
+	public Polynomial(ComplexNumber arg1, ComplexNumber arg2, ComplexNumber arg3, ComplexNumber arg4) {
+	    Coefficient = new List<ComplexNumber>();
+	    this.Coefficient.Add(arg1);
+	    this.Coefficient.Add(arg2);
+	    this.Coefficient.Add(arg3);
+	    this.Coefficient.Add(arg4);
 	}
 	
-	public void Add(Cplx coe) =>
-	    Coe.Add(coe);
+	public void Add(ComplexNumber coe) =>
+	    Coefficient.Add(coe);
 
 	/// <summary>
 	/// Derives this polynomial and creates new one
 	/// </summary>
 	/// <returns>Derivated polynomial</returns>
-	public Poly Derive()
+	public Polynomial Derive()
 	{
-	    Poly p = new Poly();
+	    Polynomial p = new Polynomial();
 
-	    for (int q = 1; q < Coe.Count; ++q)
+	    for (int q = 1; q < Coefficient.Count; ++q)
 	    {
-		p.Coe.Add(Coe[q].Multiply(new Cplx() { Re = q }));
+		p.Coefficient.Add(Coefficient[q].Multiply(new ComplexNumber() { Re = q }));
 	    }
 
 	    return p;
@@ -53,9 +53,9 @@ namespace Mathematics
 	/// </summary>
 	/// <param name="x">point of evaluation</param>
 	/// <returns>y</returns>
-	public Cplx Eval(double x)
+	public ComplexNumber Eval(double x)
 	{
-	    var y = Eval(new Cplx() { Re = x, Imaginari = 0 });
+	    var y = Eval(new ComplexNumber() { Re = x, Imaginari = 0 });
 
 	    return y;
 	}
@@ -65,14 +65,14 @@ namespace Mathematics
 	/// </summary>
 	/// <param name="x">point of evaluation</param>
 	/// <returns>y</returns>
-	public Cplx Eval(Cplx x)
+	public ComplexNumber Eval(ComplexNumber x)
 	{
-	    Cplx s = Cplx.Zero;
+	    ComplexNumber s = ComplexNumber.Zero;
 
-	    for (int i = 0; i < Coe.Count; ++i)
+	    for (int i = 0; i < Coefficient.Count; ++i)
 	    {
-		Cplx coef = Coe[i];
-		Cplx bx = x;
+		ComplexNumber coef = Coefficient[i];
+		ComplexNumber bx = x;
 		int power = i;
 
 		if (i > 0)
@@ -97,9 +97,9 @@ namespace Mathematics
 	{
 	    string s = "";
 	    
-	    for (var i = 0; i < Coe.Count; ++i)
+	    for (var i = 0; i < Coefficient.Count; ++i)
 	    {
-		s += Coe[i];
+		s += Coefficient[i];
 
 		if (i > 0)
 		{
@@ -108,7 +108,7 @@ namespace Mathematics
 			s += "x";
 		    }
 		}
-		if (i+1 < Coe.Count)
+		if (i+1 < Coefficient.Count)
                     s += " + ";
 	    }
 	    

@@ -9,33 +9,34 @@ using System.Threading;
 
 namespace Mathematics
 {
-    public class Cplx
+    public class ComplexNumber
     {
 	public double Re { get; set; }
 	public float Imaginari { get; set; }
 
 	public override bool Equals(object obj)
 	{
-	    if (obj is Cplx)
+	    if (obj is ComplexNumber)
 	    {
-		Cplx x = obj as Cplx;
+		ComplexNumber x = obj as ComplexNumber;
+
 		return x.Re == Re && x.Imaginari == Imaginari;
 	    }
 	    
 	    return base.Equals(obj);
 	}
 
-	public readonly static Cplx Zero = new Cplx()
+	public readonly static ComplexNumber Zero = new ComplexNumber()
 	{
 	    Re = 0,
 	    Imaginari = 0
 	};
 
-	public Cplx Multiply(Cplx b)
+	public ComplexNumber Multiply(ComplexNumber b)
 	{
-	    Cplx a = this;
+	    ComplexNumber a = this;
 
-	    return new Cplx()
+	    return new ComplexNumber()
 	    {
 		Re = a.Re * b.Re - a.Imaginari * b.Imaginari,
 		Imaginari = (float)(a.Re * b.Imaginari + a.Imaginari * b.Re)
@@ -47,10 +48,11 @@ namespace Mathematics
 	    return Math.Sqrt( Re * Re + Imaginari * Imaginari);
 	}
 
-	public Cplx Add(Cplx b)
+	public ComplexNumber Add(ComplexNumber b)
 	{
-	    Cplx a = this;
-	    return new Cplx()
+	    ComplexNumber a = this;
+
+	    return new ComplexNumber()
 	    {
 		Re = a.Re + b.Re,
 		Imaginari = a.Imaginari + b.Imaginari
@@ -62,10 +64,10 @@ namespace Mathematics
 	    return Math.Atan(Imaginari / Re);
 	}
 	
-	public Cplx Subtract(Cplx b)
+	public ComplexNumber Subtract(ComplexNumber b)
 	{
-	    Cplx a = this;
-	    return new Cplx()
+	    ComplexNumber a = this;
+	    return new ComplexNumber()
 	    {
 		Re = a.Re - b.Re,
 		Imaginari = a.Imaginari - b.Imaginari
@@ -77,12 +79,12 @@ namespace Mathematics
 	    return $"({Re} + {Imaginari}i)";
 	}
 
-	internal Cplx Divide(Cplx b)
+	internal ComplexNumber Divide(ComplexNumber b)
 	{
-	    var tmp = this.Multiply(new Cplx() { Re = b.Re, Imaginari = -b.Imaginari });
+	    var tmp = this.Multiply(new ComplexNumber() { Re = b.Re, Imaginari = -b.Imaginari });
 	    var tmp2 = b.Re * b.Re + b.Imaginari * b.Imaginari;
 
-	    return new Cplx()
+	    return new ComplexNumber()
 	    {
 		Re = tmp.Re / tmp2,
 		Imaginari = (float)(tmp.Imaginari / tmp2)

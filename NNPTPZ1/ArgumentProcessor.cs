@@ -37,7 +37,7 @@ namespace NNPTPZ1 {
 		return;
 	    }
 
-	    if (args.Length == 0 || args.Length > 14) {
+	    if (args.Length < 6 || args.Length > 14) {
 		Console.WriteLine("Incorrent ammount of arguments supplied.");
 		Console.WriteLine("Do --help or -h for more information");
 		Environment.Exit(1);
