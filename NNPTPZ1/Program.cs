@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using NNPTPZ1.Mathematics;
+using System.Globalization;
 
 namespace NNPTPZ1
 {
@@ -16,31 +17,26 @@ namespace NNPTPZ1
             // Argument validation
             if (args.Length < 7)
             {
-                Console.WriteLine("Chyba: Očekáváno alespoň 7 argumentů.");
-                Console.WriteLine("Použití: NNPTPZ1 <šířka> <výška> <xmin> <xmax> <ymin> <ymax> <výstupní_soubor>");
-                Environment.Exit(1);
+                Console.WriteLine("Usage: NNPTPZ1 <width> <height> <xmin> <xmax> <ymin> <ymax> <outputPath>");
+                return;
             }
 
-            int[] intargs = new int[2];
-            for (int i = 0; i < intargs.Length; i++)
-            {
-                intargs[i] = int.Parse(args[i]);
-            }
-            double[] doubleargs = new double[4];
-            for (int i = 0; i < doubleargs.Length; i++)
-            {
-                doubleargs[i] = double.Parse(args[i + 2]);
-            }
+            int width = int.Parse(args[0], CultureInfo.InvariantCulture);
+            int height = int.Parse(args[1], CultureInfo.InvariantCulture);
+            double xmin = double.Parse(args[2], CultureInfo.InvariantCulture);
+            double xmax = double.Parse(args[3], CultureInfo.InvariantCulture);
+            double ymin = double.Parse(args[4], CultureInfo.InvariantCulture);
+            double ymax = double.Parse(args[5], CultureInfo.InvariantCulture);
             string output = args[6];
-            // TODO: add parameters from args?
-            Bitmap bmp = new Bitmap(intargs[0], intargs[1]);
-            double xmin = doubleargs[0];
-            double xmax = doubleargs[1];
-            double ymin = doubleargs[2];
-            double ymax = doubleargs[3];
 
-            double xstep = (xmax - xmin) / intargs[0];
-            double ystep = (ymax - ymin) / intargs[1];
+            const int MaxIterations = 30;
+            const double ConvergenceThreshold = 0.5;
+            const float Epsilon = 0.0001f;
+
+            var bmp = new Bitmap(width, height);
+
+            double xstep = (xmax - xmin) / width;
+            double ystep = (ymax - ymin) / height;
 
             List<Cplx> koreny = new List<Cplx>();
             // TODO: poly should be parameterised?
@@ -65,9 +61,9 @@ namespace NNPTPZ1
 
             // TODO: cleanup!!!
             // for every pixel in image...
-            for (int i = 0; i < intargs[0]; i++)
+            for (int i = 0; i < width; i++)
             {
-                for (int j = 0; j < intargs[1]; j++)
+                for (int j = 0; j < height; j++)
                 {
                     // find "world" coordinates of pixel
                     double y = ymin + i * ystep;
@@ -80,21 +76,21 @@ namespace NNPTPZ1
                     };
 
                     if (ox.Re == 0)
-                        ox.Re = 0.0001;
+                        ox.Re = Epsilon;
                     if (ox.Imaginari == 0)
-                        ox.Imaginari = 0.0001f;
+                        ox.Imaginari = Epsilon;
 
                     //Console.WriteLine(ox);
 
                     // find solution of equation using newton's iteration
                     float it = 0;
-                    for (int q = 0; q< 30; q++)
+                    for (int q = 0; q< MaxIterations; q++)
                     {
                         var diff = p.Eval(ox).Divide(pd.Eval(ox));
                         ox = ox.Subtract(diff);
 
                         //Console.WriteLine($"{q} {ox} -({diff})");
-                        if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Imaginari, 2) >= 0.5)
+                        if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Imaginari, 2) >= ConvergenceThreshold)
                         {
                             q--;
                         }
