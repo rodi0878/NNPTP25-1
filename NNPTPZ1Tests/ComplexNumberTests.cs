@@ -6,27 +6,14 @@ namespace NNPTPZ1Tests
     [TestClass()]
     public class ComplexNumberTests
     {
-
         [TestMethod()]
         public void AddTest()
         {
-            ComplexNumber a = new ComplexNumber()
-            {
-                Real = 10,
-                Imaginary = 20
-            };
-            ComplexNumber b = new ComplexNumber()
-            {
-                Real = 1,
-                Imaginary = 2
-            };
+            ComplexNumber a = new ComplexNumber(10, 20);
+            ComplexNumber b = new ComplexNumber(1, 2);
 
             ComplexNumber actual = a.Add(b);
-            ComplexNumber shouldBe = new ComplexNumber()
-            {
-                Real = 11,
-                Imaginary = 22
-            };
+            ComplexNumber shouldBe = new ComplexNumber(11, 22);
 
             Assert.AreEqual(shouldBe, actual);
 
@@ -37,13 +24,9 @@ namespace NNPTPZ1Tests
             r2 = b.ToString();
             Assert.AreEqual(e2, r2);
 
-            a = new ComplexNumber()
-            {
-                Real = 1,
-                Imaginary = -1
-            };
-            b = new ComplexNumber() { Real = 0, Imaginary = 0 };
-            shouldBe = new ComplexNumber() { Real = 1, Imaginary = -1 };
+            a = new ComplexNumber(1, -1);
+            b = new ComplexNumber(0, 0);
+            shouldBe = new ComplexNumber(1, -1);
             actual = a.Add(b);
             Assert.AreEqual(shouldBe, actual);
 
@@ -60,17 +43,17 @@ namespace NNPTPZ1Tests
         public void AddTestPolynome()
         {
             Polynomial polynomial = new Polynomial();
-            polynomial.Coefficient.Add(new ComplexNumber() { Real = 1, Imaginary = 0 });
-            polynomial.Coefficient.Add(new ComplexNumber() { Real = 0, Imaginary = 0 });
-            polynomial.Coefficient.Add(new ComplexNumber() { Real = 1, Imaginary = 0 });
-            ComplexNumber result = polynomial.Evaluate(new ComplexNumber() { Real = 0, Imaginary = 0 });
-            var expected = new ComplexNumber() { Real = 1, Imaginary = 0 };
+            polynomial.Coefficient.Add(new ComplexNumber(1, 0));
+            polynomial.Coefficient.Add(new ComplexNumber(0, 0));
+            polynomial.Coefficient.Add(new ComplexNumber(1, 0));
+            ComplexNumber result = polynomial.Evaluate(new ComplexNumber(0, 0) { Real = 0, Imaginary = 0 });
+            var expected = new ComplexNumber(1, 0);
             Assert.AreEqual(expected, result);
-            result = polynomial.Evaluate(new ComplexNumber() { Real = 1, Imaginary = 0 });
-            expected = new ComplexNumber() { Real = 2, Imaginary = 0 };
+            result = polynomial.Evaluate(new ComplexNumber(1, 0));
+            expected = new ComplexNumber(2, 0);
             Assert.AreEqual(expected, result);
-            result = polynomial.Evaluate(new ComplexNumber() { Real = 2, Imaginary = 0 });
-            expected = new ComplexNumber() { Real = 5.0000000000, Imaginary = 0 };
+            result = polynomial.Evaluate(new ComplexNumber(2, 0));
+            expected = new ComplexNumber(5.0000000000, 0);
             Assert.AreEqual(expected, result);
 
             var r2 = polynomial.ToString();
@@ -79,5 +62,3 @@ namespace NNPTPZ1Tests
         }
     }
 }
-
-

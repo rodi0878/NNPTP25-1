@@ -14,24 +14,18 @@ namespace NNPTPZ1
             // if parameters are not given draw default
             if (args.Length <= 9)
             {
-                Coefficient.Add(new ComplexNumber() { Real = 1 });
+                Coefficient.Add(new ComplexNumber(1));
                 Coefficient.Add(ComplexNumber.Zero);
                 Coefficient.Add(ComplexNumber.Zero);
-                Coefficient.Add(new ComplexNumber() { Real = 1 });
+                Coefficient.Add(new ComplexNumber(1));
             }
             else
             {
                 for (var i = 9; i < args.Length; i++)
                 {
-                    Coefficient.Add(
-                        new ComplexNumber()
-                        {
-                            Real = double.Parse(args[i], CultureInfo.InvariantCulture)
-                        });
+                    Coefficient.Add(new ComplexNumber(double.Parse(args[i], CultureInfo.InvariantCulture)));
                 }
             }
-
-           
         }
 
         public List<ComplexNumber> Coefficient { get; set; } = new List<ComplexNumber>();
@@ -48,7 +42,7 @@ namespace NNPTPZ1
             var p = new Polynomial();
             for (var q = 1; q < Coefficient.Count; q++)
             {
-                p.Coefficient.Add(Coefficient[q].Multiply(new ComplexNumber() { Real = q }));
+                p.Coefficient.Add(Coefficient[q].Multiply(new ComplexNumber(q)));
             }
 
             return p;
@@ -61,7 +55,7 @@ namespace NNPTPZ1
         /// <returns>y</returns>
         public ComplexNumber Evaluate(double x)
         {
-            var y = Evaluate(new ComplexNumber() { Real = x, Imaginary = 0 });
+            var y = Evaluate(new ComplexNumber(x, 0));
             return y;
         }
 

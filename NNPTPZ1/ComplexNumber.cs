@@ -5,36 +5,54 @@ namespace NNPTPZ1
     public class ComplexNumber
     {
         public double Real { get; set; }
-        public float Imaginary { get; set; }
+        public double Imaginary { get; set; }
+
+        public ComplexNumber(double real)
+        {
+            Real = real;
+        }
+
+        public ComplexNumber(double real, double imaginary)
+        {
+            Real = real;
+            Imaginary = imaginary;
+        }
 
         public override bool Equals(object obj)
         {
-            if (obj is ComplexNumber)
-            {
-                var x = obj as ComplexNumber;
-                return x.Real.Equals(Real) && x.Imaginary.Equals(Imaginary);
-            }
-
-            return base.Equals(obj);
+            return obj is ComplexNumber other && Equals(other);
         }
 
-        public static readonly ComplexNumber Zero = new ComplexNumber()
+        public bool Equals(ComplexNumber other)
         {
-            Real = 0,
-            Imaginary = 0
-        };
+            if (other is null)
+            {
+                return false;
+            }
+
+            return Real.Equals(other.Real) && Imaginary.Equals(other.Imaginary);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (Real.GetHashCode() * 397) ^ Imaginary.GetHashCode();
+            }
+        }
+
+        public static readonly ComplexNumber Zero = new ComplexNumber(0, 0);
 
         public ComplexNumber Multiply(ComplexNumber b)
         {
             var a = this;
-            return new ComplexNumber()
-            {
-                Real = a.Real * b.Real - a.Imaginary * b.Imaginary,
-                Imaginary = (float)(a.Real * b.Imaginary + a.Imaginary * b.Real)
-            };
+            return new ComplexNumber(
+                a.Real * b.Real - a.Imaginary * b.Imaginary,
+                a.Real * b.Imaginary + a.Imaginary * b.Real
+            );
         }
 
-        public double GetAbS()
+        public double CalculateAbsoluteValue()
         {
             return Math.Sqrt(Real * Real + Imaginary * Imaginary);
         }
@@ -42,26 +60,23 @@ namespace NNPTPZ1
         public ComplexNumber Add(ComplexNumber b)
         {
             var a = this;
-            return new ComplexNumber()
-            {
-                Real = a.Real + b.Real,
-                Imaginary = a.Imaginary + b.Imaginary
-            };
+            return new ComplexNumber(a.Real + b.Real, a.Imaginary + b.Imaginary);
+        }
+
+        public double GetAngleInRadians()
+        {
+            return Math.Atan2(Imaginary, Real);
         }
 
         public double GetAngleInDegrees()
         {
-            return Math.Atan(Imaginary / Real);
+            return GetAngleInRadians() * (180.0 / Math.PI);
         }
 
         public ComplexNumber Subtract(ComplexNumber b)
         {
             var a = this;
-            return new ComplexNumber()
-            {
-                Real = a.Real - b.Real,
-                Imaginary = a.Imaginary - b.Imaginary
-            };
+            return new ComplexNumber(a.Real - b.Real, a.Imaginary - b.Imaginary);
         }
 
         public override string ToString()
@@ -71,14 +86,10 @@ namespace NNPTPZ1
 
         internal ComplexNumber Divide(ComplexNumber b)
         {
-            var tmp = Multiply(new ComplexNumber() { Real = b.Real, Imaginary = -b.Imaginary });
+            var tmp = Multiply(new ComplexNumber(b.Real, -b.Imaginary));
             var tmp2 = b.Real * b.Real + b.Imaginary * b.Imaginary;
 
-            return new ComplexNumber()
-            {
-                Real = tmp.Real / tmp2,
-                Imaginary = (float)(tmp.Imaginary / tmp2)
-            };
+            return new ComplexNumber(tmp.Real / tmp2, tmp.Imaginary / tmp2);
         }
     }
 }
