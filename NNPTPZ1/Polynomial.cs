@@ -10,109 +10,111 @@ namespace Mathematics
 {
     public class Polynomial
     {
-	/// <summary>
-	/// Coefficient
-	/// </summary>
-	public List<ComplexNumber> Coefficient { get; set; }
+        /// <summary>
+        /// Coefficient
+        /// </summary>
+        public List<ComplexNumber> Coefficient { get; set; }
 
-	/// <summary>
-	/// Constructor
-	/// </summary>
-	public Polynomial() => Coefficient = new List<ComplexNumber>();
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public Polynomial() => Coefficient = new List<ComplexNumber>();
 
-	///Overloaded constructor for parametrization
-	public Polynomial(ComplexNumber arg1, ComplexNumber arg2, ComplexNumber arg3, ComplexNumber arg4) {
-	    Coefficient = new List<ComplexNumber>();
-	    this.Coefficient.Add(arg1);
-	    this.Coefficient.Add(arg2);
-	    this.Coefficient.Add(arg3);
-	    this.Coefficient.Add(arg4);
-	}
-	
-	public void Add(ComplexNumber coe) =>
-	    Coefficient.Add(coe);
+        ///Overloaded constructor for parametrization
+        public Polynomial(ComplexNumber arg1, ComplexNumber arg2, ComplexNumber arg3, ComplexNumber arg4)
+        {
+            Coefficient = new List<ComplexNumber>();
 
-	/// <summary>
-	/// Derives this polynomial and creates new one
-	/// </summary>
-	/// <returns>Derivated polynomial</returns>
-	public Polynomial Derive()
-	{
-	    Polynomial p = new Polynomial();
+            this.Coefficient.Add(arg1);
+            this.Coefficient.Add(arg2);
+            this.Coefficient.Add(arg3);
+            this.Coefficient.Add(arg4);
+        }
 
-	    for (int q = 1; q < Coefficient.Count; ++q)
-	    {
-		p.Coefficient.Add(Coefficient[q].Multiply(new ComplexNumber() { Re = q }));
-	    }
+        public void Add(ComplexNumber coe) =>
+            Coefficient.Add(coe);
 
-	    return p;
-	}
+        /// <summary>
+        /// Derives this polynomial and creates new one
+        /// </summary>
+        /// <returns>Derivated polynomial</returns>
+        public Polynomial Derive()
+        {
+            Polynomial p = new Polynomial();
 
-	/// <summary>
-	/// Evaluates polynomial at given point
-	/// </summary>
-	/// <param name="x">point of evaluation</param>
-	/// <returns>y</returns>
-	public ComplexNumber Eval(double x)
-	{
-	    var y = Eval(new ComplexNumber() { Re = x, Imaginari = 0 });
+            for (int q = 1; q < Coefficient.Count; ++q)
+            {
+                p.Coefficient.Add(Coefficient[q].Multiply(new ComplexNumber() { Re = q }));
+            }
 
-	    return y;
-	}
+            return p;
+        }
 
-	/// <summary>
-	/// Evaluates polynomial at given point
-	/// </summary>
-	/// <param name="x">point of evaluation</param>
-	/// <returns>y</returns>
-	public ComplexNumber Eval(ComplexNumber x)
-	{
-	    ComplexNumber s = ComplexNumber.Zero;
+        /// <summary>
+        /// Evaluates polynomial at given point
+        /// </summary>
+        /// <param name="x">point of evaluation</param>
+        /// <returns>y</returns>
+        public ComplexNumber Eval(double x)
+        {
+            var y = Eval(new ComplexNumber() { Re = x, Imaginari = 0 });
 
-	    for (int i = 0; i < Coefficient.Count; ++i)
-	    {
-		ComplexNumber coef = Coefficient[i];
-		ComplexNumber bx = x;
-		int power = i;
+            return y;
+        }
 
-		if (i > 0)
-		{
-		    for (int j = 0; j < power - 1; ++j)
-			bx = bx.Multiply(x);
+        /// <summary>
+        /// Evaluates polynomial at given point
+        /// </summary>
+        /// <param name="x">point of evaluation</param>
+        /// <returns>y</returns>
+        public ComplexNumber Eval(ComplexNumber x)
+        {
+            ComplexNumber s = ComplexNumber.Zero;
 
-		    coef = coef.Multiply(bx);
-		}
+            for (int i = 0; i < Coefficient.Count; ++i)
+            {
+                ComplexNumber coef = Coefficient[i];
+                ComplexNumber bx = x;
+                int power = i;
 
-		s = s.Add(coef);
-	    }
+                if (i > 0)
+                {
+                    for (int j = 0; j < power - 1; ++j)
+                        bx = bx.Multiply(x);
 
-	    return s;
-	}
+                    coef = coef.Multiply(bx);
+                }
 
-	/// <summary>
-	/// ToString
-	/// </summary>
-	/// <returns>String repr of polynomial</returns>
-	public override string ToString()
-	{
-	    string s = "";
-	    
-	    for (var i = 0; i < Coefficient.Count; ++i)
-	    {
-		s += Coefficient[i];
+                s = s.Add(coef);
+            }
 
-		if (i > 0)
-		{
-		    for (var j = 0; j < i; j++)
-		    {
-			s += "x";
-		    }
-		}
-		if (i+1 < Coefficient.Count)
+            return s;
+        }
+
+        /// <summary>
+        /// ToString
+        /// </summary>
+        /// <returns>String repr of polynomial</returns>
+        public override string ToString()
+        {
+            string s = "";
+
+            for (var i = 0; i < Coefficient.Count; ++i)
+            {
+                s += Coefficient[i];
+
+                if (i > 0)
+                {
+                    for (var j = 0; j < i; j++)
+                    {
+                        s += "x";
+                    }
+                }
+                if (i + 1 < Coefficient.Count)
                     s += " + ";
-	    }
-	    
-	    return s;
-	}
+            }
+
+            return s;
+        }
     }
 }

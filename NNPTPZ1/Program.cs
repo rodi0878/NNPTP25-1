@@ -11,17 +11,17 @@ namespace NNPTPZ1
     /// </summary>
     class Program
     {
-	///<summary>
-	/// This method suffered from the Long Method issue (https://refactoring.guru/smells/long-method), and needed to be split up into its implicit parts.
-	///</summary>
+        ///<summary>
+        /// This method suffered from the Long Method issue (https://refactoring.guru/smells/long-method), and needed to be split up into its implicit parts.
+        ///</summary>
         static void Main(string[] args)
         {
-	    var argumentProcessor = new ArgumentProcessor(args);
-	    var fractalRenderer = new FractalRenderer(argumentProcessor);
-	    var bMPExporter = new BMPExporter(argumentProcessor);
-	    
-	    argumentProcessor.HandleArguments();
-	    bMPExporter.ExportBitmap(fractalRenderer.PopulateBitmap());
+            var argumentProcessor = new ArgumentProcessor(args);
+            var fractalRenderer = new FractalRenderer(argumentProcessor);
+            var bMPExporter = new BMPExporter(argumentProcessor);
+
+            argumentProcessor.HandleArguments();
+            bMPExporter.ExportBitmap(fractalRenderer.PopulateBitmap());
         }
     }
 }
