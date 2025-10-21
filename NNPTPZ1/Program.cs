@@ -15,90 +15,121 @@ namespace NNPTPZ1
         static int imageWidth, imageHeight;
         static double xMin, xMax, yMin, yMax;
         static string outputPath;
-        static readonly Color[] colors =
+        static readonly Color[] Colors =
         {
-           Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
-        };
+                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
+            };
+
+        static List<ComplexNumber> Roots = new List<ComplexNumber>();
+        static Polynome Polynomial = new Polynome();
+        static Polynome PolynomialDerivative;
 
         static void Main(string[] args)
         {
             ParseArguments(args);
 
-            Bitmap bmp = new Bitmap(imageWidth, imageHeight);
+            Polynomial = PreparePolynomial();
+            PolynomialDerivative = Polynomial.Derive();
 
-            double xstep = (xMax - xMin) / imageWidth;
-            double ystep = (yMax - yMin) / imageHeight;
+            PrintPolynomial();
 
-            List<ComplexNumber> koreny = new List<ComplexNumber>();
-            Polynome p = new Polynome();
-            p.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
-            p.Coefficients.Add(ComplexNumber.Zero);
-            p.Coefficients.Add(ComplexNumber.Zero);
-            p.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
-            Polynome ptmp = p;
-            Polynome pd = p.Derive();
+            Bitmap fractalImage = GenerateFractalImage();
 
-            Console.WriteLine(p);
-            Console.WriteLine(pd);
+            fractalImage.Save(outputPath ?? DEFAULT_OUTPUT_PATH);
+        }
 
-            var maxid = 0;
+        static Bitmap GenerateFractalImage()
+        {
+            Bitmap fractalImage = new Bitmap(imageWidth, imageHeight);
 
-            for (int i = 0; i < imageWidth; i++)
+            double xStep = (xMax - xMin) / imageWidth;
+            double yStep = (yMax - yMin) / imageHeight;
+
+            for (int row = 0; row < imageWidth; row++)
             {
-                for (int j = 0; j < imageHeight; j++)
+                for (int column = 0; column < imageHeight; column++)
                 {
-                    double y = yMin + i * ystep;
-                    double x = xMin + j * xstep;
-
-                    ComplexNumber ox = new ComplexNumber()
-                    {
-                        RealPart = x,
-                        ImaginaryPart = (float)(y)
-                    };
-
-                    if (ox.RealPart == 0)
-                        ox.RealPart = 0.0001;
-                    if (ox.ImaginaryPart == 0)
-                        ox.ImaginaryPart = 0.0001f;
-
-                    float it = 0;
-                    for (int q = 0; q < 30; q++)
-                    {
-                        var diff = p.Eval(ox).Divide(pd.Eval(ox));
-                        ox = ox.Subtract(diff);
-
-                        if (Math.Pow(diff.RealPart, 2) + Math.Pow(diff.ImaginaryPart, 2) >= 0.5)
-                        {
-                            q--;
-                        }
-                        it++;
-                    }
-
-                    var known = false;
-                    var id = 0;
-                    for (int w = 0; w < koreny.Count; w++)
-                    {
-                        if (Math.Pow(ox.RealPart - koreny[w].RealPart, 2) + Math.Pow(ox.ImaginaryPart - koreny[w].ImaginaryPart, 2) <= 0.01)
-                        {
-                            known = true;
-                            id = w;
-                        }
-                    }
-                    if (!known)
-                    {
-                        koreny.Add(ox);
-                        id = koreny.Count;
-                        maxid = id + 1;
-                    }
-
-                    var vv = colors[id % colors.Length];
-                    vv = Color.FromArgb(vv.R, vv.G, vv.B);
-                    vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R - (int)it * 2), 255), Math.Min(Math.Max(0, vv.G - (int)it * 2), 255), Math.Min(Math.Max(0, vv.B - (int)it * 2), 255));
-                    bmp.SetPixel(j, i, vv);
+                    ProcessPixel(fractalImage, row, column, xStep, yStep);
                 }
             }
 
-            bmp.Save(outputPath ?? DEFAULT_OUTPUT_PATH);
+            return fractalImage;
+        }
+
+        static void ProcessPixel(Bitmap fractalImage, int row, int column, double xStep, double yStep)
+        {
+            double yCoordinate = yMin + row * yStep;
+            double xCoordinate = xMin + column * xStep;
+
+            ComplexNumber complexPoint = new ComplexNumber()
+            {
+                RealPart = xCoordinate,
+                ImaginaryPart = (float)(yCoordinate)
+            };
+
+            if (complexPoint.RealPart == 0)
+                complexPoint.RealPart = 0.0001;
+            if (complexPoint.ImaginaryPart == 0)
+                complexPoint.ImaginaryPart = 0.0001f;
+
+            float iterations = PerformNewtonIterations(ref complexPoint);
+
+            int rootIndex = IdentifyRoot(complexPoint);
+
+            ApplyColor(fractalImage, row, column, rootIndex, iterations);
+        }
+
+        static float PerformNewtonIterations(ref ComplexNumber complexPoint)
+        {
+            float iterations = 0;
+            for (int iteration = 0; iteration < 30; iteration++)
+            {
+                var difference = Polynomial.Eval(complexPoint).Divide(PolynomialDerivative.Eval(complexPoint));
+                complexPoint = complexPoint.Subtract(difference);
+
+                if (Math.Pow(difference.RealPart, 2) + Math.Pow(difference.ImaginaryPart, 2) >= 0.5)
+                {
+                    iteration--;
+                }
+                iterations++;
+            }
+
+            return iterations;
+        }
+
+        static int IdentifyRoot(ComplexNumber complexPoint)
+        {
+            bool isKnownRoot = false;
+            int rootIndex = 0;
+
+            for (int i = 0; i < Roots.Count; i++)
+            {
+                if (Math.Pow(complexPoint.RealPart - Roots[i].RealPart, 2) + Math.Pow(complexPoint.ImaginaryPart - Roots[i].ImaginaryPart, 2) <= 0.01)
+                {
+                    isKnownRoot = true;
+                    rootIndex = i;
+                }
+            }
+
+            if (!isKnownRoot)
+            {
+                Roots.Add(complexPoint);
+                rootIndex = Roots.Count - 1;
+            }
+
+            return rootIndex;
+        }
+
+        static void ApplyColor(Bitmap fractalImage, int row, int column, int rootIndex, float iterations)
+        {
+            var baseColor = Colors[rootIndex % Colors.Length];
+            baseColor = Color.FromArgb(baseColor.R, baseColor.G, baseColor.B);
+            baseColor = Color.FromArgb(
+                Math.Min(Math.Max(0, baseColor.R - (int)iterations * 2), 255),
+                Math.Min(Math.Max(0, baseColor.G - (int)iterations * 2), 255),
+                Math.Min(Math.Max(0, baseColor.B - (int)iterations * 2), 255)
+            );
+            fractalImage.SetPixel(column, row, baseColor);
         }
 
         static void ParseArguments(string[] arguments)
@@ -109,7 +140,25 @@ namespace NNPTPZ1
             xMax = int.Parse(arguments[3]);
             yMin = int.Parse(arguments[4]);
             yMax = int.Parse(arguments[5]);
-            outputPath = arguments[6];
+
+            // We have defined default output path, so this argument is optional
+            outputPath = arguments.Length > 6 ? arguments[6] : null;
+        }
+
+        static void PrintPolynomial()
+        {
+            Console.WriteLine(Polynomial);
+            Console.WriteLine(PolynomialDerivative);
+        }
+
+        static Polynome PreparePolynomial()
+        {
+            var polynomial = new Polynome();
+            polynomial.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
+            polynomial.Coefficients.Add(ComplexNumber.Zero);
+            polynomial.Coefficients.Add(ComplexNumber.Zero);
+            polynomial.Coefficients.Add(new ComplexNumber() { RealPart = 1 });
+            return polynomial;
         }
     }
 }
