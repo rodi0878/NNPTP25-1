@@ -17,8 +17,16 @@ namespace NNPTPZ1
         static string outputPath;
         static readonly Color[] Colors =
         {
-                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
-            };
+            Color.Red, 
+            Color.Blue, 
+            Color.Green, 
+            Color.Yellow, 
+            Color.Orange, 
+            Color.Fuchsia, 
+            Color.Gold, 
+            Color.Cyan, 
+            Color.Magenta
+        };
 
         static List<ComplexNumber> Roots = new List<ComplexNumber>();
         static Polynome Polynomial = new Polynome();
