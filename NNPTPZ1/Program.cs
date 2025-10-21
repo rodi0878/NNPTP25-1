@@ -39,7 +39,7 @@ namespace NNPTPZ1
             double xstep = (xmax - xmin) / width;
             double ystep = (ymax - ymin) / height;
 
-            List<Cplx> koreny = new List<Cplx>();
+            List<Cplx> roots = new List<Cplx>();
 
             // TODO: poly should be parameterised?
             Poly p = new Poly();
@@ -51,7 +51,7 @@ namespace NNPTPZ1
 
 
 
-            var clrs = new Color[]
+            var colors = new Color[]
             {
                 Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
             };
@@ -61,64 +61,61 @@ namespace NNPTPZ1
             {
                 for (int j = 0; j < height; j++)
                 {
-                    // find "world" coordinates of pixel
-                    double y = ymin + i * ystep;
-                    double x = xmin + j * xstep;
+                    var ox = PixelToWorld(i, j, xmin, ymin, xstep, ystep, Epsilon);
 
-                    Cplx ox = new Cplx()
-                    {
-                        Re = x,
-                        Imaginari = (float)(y)
-                    };
+                    int it = NewtonIterate(ref ox, p, pd, MaxIterations, ConvergenceThreshold);
 
-                    if (ox.Re == 0)
-                        ox.Re = Epsilon;
-                    if (ox.Imaginari == 0)
-                        ox.Imaginari = Epsilon;
+                    var id = FindRootIndex(roots, ox, RootTolerance);
 
-                    // find solution of equation using newton's iteration
-                    float it = 0;
-                    for (int q = 0; q< MaxIterations; q++)
-                    {
-                        var diff = p.Eval(ox).Divide(pd.Eval(ox));
-                        ox = ox.Subtract(diff);
+                    var baseColor = colors[id % colors.Length];
+                    var shaded = ShadeByIterations(baseColor, it);
 
-                        if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Imaginari, 2) >= ConvergenceThreshold)
-                        {
-                            q--;
-                        }
-                        it++;
-                    }
-
-                    // find solution root number
-                    var known = false;
-                    var id = 0;
-                    for (int w = 0; w <koreny.Count;w++)
-                    {
-                        if (Math.Pow(ox.Re- koreny[w].Re, 2) + Math.Pow(ox.Imaginari - koreny[w].Imaginari, 2) <= RootTolerance)
-                        {
-                            known = true;
-                            id = w;
-                        }
-                    }
-                    if (!known)
-                    {
-                        koreny.Add(ox);
-                        id = koreny.Count;
-                    }
-
-                    // colorize pixel according to root number
-                    var baseColor = clrs[id % clrs.Length];
-                    var shaded = Color.FromArgb(
-                        Math.Min(Math.Max(0, baseColor.R - (int)it * 2), 255),
-                        Math.Min(Math.Max(0, baseColor.G - (int)it * 2), 255),
-                        Math.Min(Math.Max(0, baseColor.B - (int)it * 2), 255)
-                        );
                     bmp.SetPixel(j, i, shaded);
                 }
             }
 
                     bmp.Save(output ?? "../../../out.png");
+        }
+
+        private static Cplx PixelToWorld(int i, int j, double xmin, double ymin, double xstep, double ystep, float eps)
+        {
+            double y = ymin + i * ystep;
+            double x = xmin + j * xstep;
+            var ox = new Cplx { Re = x, Imaginari = (float)y };
+            if (ox.Re == 0) ox.Re = eps;
+            if (ox.Imaginari == 0) ox.Imaginari = eps;
+            return ox;
+        }
+
+        private static int NewtonIterate(ref Cplx ox, Poly p, Poly pd, int maxIter, double threshold)
+        {
+            int it = 0;
+            for (int q = 0; q < maxIter; q++)
+            {
+                var diff = p.Eval(ox).Divide(pd.Eval(ox));
+                ox = ox.Subtract(diff);
+                if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Imaginari, 2) >= threshold) q--;
+                it++;
+            }
+            return it;
+        }
+
+        private static int FindRootIndex(List<Cplx> roots, Cplx ox, double rootTolerance)
+        {
+            for (int w = 0; w < roots.Count; w++)
+                if (Math.Pow(ox.Re - roots[w].Re, 2) + Math.Pow(ox.Imaginari - roots[w].Imaginari, 2) <= rootTolerance)
+                    return w;
+            roots.Add(ox);
+            return roots.Count;
+        }
+
+        private static Color ShadeByIterations(Color baseColor, int it)
+        {
+            return Color.FromArgb(
+                Math.Min(Math.Max(0, baseColor.R - it * 2), 255),
+                Math.Min(Math.Max(0, baseColor.G - it * 2), 255),
+                Math.Min(Math.Max(0, baseColor.B - it * 2), 255)
+            );
         }
     }
 
