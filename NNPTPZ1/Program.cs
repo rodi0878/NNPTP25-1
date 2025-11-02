@@ -14,12 +14,6 @@ namespace NNPTPZ1
     {
         static void Main(string[] args)
         {
-            // Argument validation
-            if (args.Length < 7)
-            {
-                Console.WriteLine("Usage: NNPTPZ1 <width> <height> <xmin> <xmax> <ymin> <ymax> <outputPath>");
-                return;
-            }
 
             int width = int.Parse(args[0], CultureInfo.InvariantCulture);
             int height = int.Parse(args[1], CultureInfo.InvariantCulture);
@@ -39,15 +33,15 @@ namespace NNPTPZ1
             double xstep = (xmax - xmin) / width;
             double ystep = (ymax - ymin) / height;
 
-            List<Cplx> roots = new List<Cplx>();
+            List<Complex> roots = new List<Complex>();
 
             // TODO: poly should be parameterised?
-            Poly p = new Poly();
-            p.Coe.Add(new Cplx() { Re = 1 });
-            p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(new Cplx() { Re = 1 });
-            Poly pd = p.Derive();
+            Polynomial polynomial = new Polynomial();
+            polynomial.Coefficient.Add(new Complex(1, 0));
+            polynomial.Coefficient.Add(Complex.Zero);
+            polynomial.Coefficient.Add(Complex.Zero);
+            polynomial.Coefficient.Add(new Complex(1, 0));
+            Polynomial derivative = polynomial.Derive();
 
 
 
@@ -61,14 +55,14 @@ namespace NNPTPZ1
             {
                 for (int j = 0; j < height; j++)
                 {
-                    var ox = PixelToWorld(i, j, xmin, ymin, xstep, ystep, Epsilon);
+                    var ox = FractalOperations.PixelToWorld(i, j, xmin, ymin, xstep, ystep, Epsilon);
 
-                    int it = NewtonIterate(ref ox, p, pd, MaxIterations, ConvergenceThreshold);
+                    int it = FractalOperations.NewtonIterate(ref ox, polynomial, derivative, MaxIterations, ConvergenceThreshold);
 
-                    var id = FindRootIndex(roots, ox, RootTolerance);
+                    var id = FractalOperations.FindRootIndex(roots, ox, RootTolerance);
 
                     var baseColor = colors[id % colors.Length];
-                    var shaded = ShadeByIterations(baseColor, it);
+                    var shaded = FractalOperations.ShadeByIterations(baseColor, it);
 
                     bmp.SetPixel(j, i, shaded);
                 }
@@ -77,46 +71,6 @@ namespace NNPTPZ1
                     bmp.Save(output ?? "../../../out.png");
         }
 
-        private static Cplx PixelToWorld(int i, int j, double xmin, double ymin, double xstep, double ystep, float eps)
-        {
-            double y = ymin + i * ystep;
-            double x = xmin + j * xstep;
-            var ox = new Cplx { Re = x, Imaginari = (float)y };
-            if (ox.Re == 0) ox.Re = eps;
-            if (ox.Imaginari == 0) ox.Imaginari = eps;
-            return ox;
-        }
-
-        private static int NewtonIterate(ref Cplx ox, Poly p, Poly pd, int maxIter, double threshold)
-        {
-            int it = 0;
-            for (int q = 0; q < maxIter; q++)
-            {
-                var diff = p.Eval(ox).Divide(pd.Eval(ox));
-                ox = ox.Subtract(diff);
-                if (Math.Pow(diff.Re, 2) + Math.Pow(diff.Imaginari, 2) >= threshold) q--;
-                it++;
-            }
-            return it;
-        }
-
-        private static int FindRootIndex(List<Cplx> roots, Cplx ox, double rootTolerance)
-        {
-            for (int w = 0; w < roots.Count; w++)
-                if (Math.Pow(ox.Re - roots[w].Re, 2) + Math.Pow(ox.Imaginari - roots[w].Imaginari, 2) <= rootTolerance)
-                    return w;
-            roots.Add(ox);
-            return roots.Count;
-        }
-
-        private static Color ShadeByIterations(Color baseColor, int it)
-        {
-            return Color.FromArgb(
-                Math.Min(Math.Max(0, baseColor.R - it * 2), 255),
-                Math.Min(Math.Max(0, baseColor.G - it * 2), 255),
-                Math.Min(Math.Max(0, baseColor.B - it * 2), 255)
-            );
-        }
     }
 
 }

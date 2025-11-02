@@ -2,34 +2,34 @@
 
 namespace NNPTPZ1.Mathematics
 {
-    public class Poly
+    public class Polynomial
     {
         /// <summary>
         /// Coe
         /// </summary>
-        public List<Cplx> Coe { get; set; }
+        public List<Complex> Coefficient { get; set; }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public Poly() => Coe = new List<Cplx>();
+        public Polynomial() => Coefficient = new List<Complex>();
 
-        public void Add(Cplx coe) =>
-            Coe.Add(coe);
+        public void Add(Complex coe) =>
+            Coefficient.Add(coe);
 
         /// <summary>
         /// Derives this polynomial and creates new one
         /// </summary>
         /// <returns>Derivated polynomial</returns>
-        public Poly Derive()
+        public Polynomial Derive()
         {
-            Poly p = new Poly();
-            for (int q = 1; q < Coe.Count; q++)
+            Polynomial polynomial = new Polynomial();
+            for (int q = 1; q < Coefficient.Count; q++)
             {
-                p.Coe.Add(Coe[q].Multiply(new Cplx() { Re = q }));
+                polynomial.Coefficient.Add(Coefficient[q].Multiply(new Complex(q, 0)));
             }
 
-            return p;
+            return polynomial;
         }
 
         /// <summary>
@@ -37,9 +37,9 @@ namespace NNPTPZ1.Mathematics
         /// </summary>
         /// <param name="x">point of evaluation</param>
         /// <returns>y</returns>
-        public Cplx Eval(double x)
+        public Complex Eval(double x)
         {
-            var y = Eval(new Cplx() { Re = x, Imaginari = 0 });
+            var y = Eval(new Complex(x, 0));
             return y;
         }
 
@@ -48,13 +48,13 @@ namespace NNPTPZ1.Mathematics
         /// </summary>
         /// <param name="x">point of evaluation</param>
         /// <returns>y</returns>
-        public Cplx Eval(Cplx x)
+        public Complex Eval(Complex x)
         {
-            Cplx s = Cplx.Zero;
-            for (int i = 0; i < Coe.Count; i++)
+            Complex s = Complex.Zero;
+            for (int i = 0; i < Coefficient.Count; i++)
             {
-                Cplx coef = Coe[i];
-                Cplx bx = x;
+                Complex coef = Coefficient[i];
+                Complex bx = x;
                 int power = i;
 
                 if (i > 0)
@@ -79,9 +79,9 @@ namespace NNPTPZ1.Mathematics
         {
             string s = "";
             int i = 0;
-            for (; i < Coe.Count; i++)
+            for (; i < Coefficient.Count; i++)
             {
-                s += Coe[i];
+                s += Coefficient[i];
                 if (i > 0)
                 {
                     int j = 0;
@@ -90,7 +90,7 @@ namespace NNPTPZ1.Mathematics
                         s += "x";
                     }
                 }
-                if (i + 1 < Coe.Count)
+                if (i + 1 < Coefficient.Count)
                     s += " + ";
             }
             return s;
