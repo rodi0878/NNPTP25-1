@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
-using NNPTPZ1.Mathematics;
-using System.Globalization;
+using System.IO;
 
 namespace NNPTPZ1
 {
@@ -13,61 +12,21 @@ namespace NNPTPZ1
     {
         static void Main(string[] args)
         {
-
-            int width = int.Parse(args[0], CultureInfo.InvariantCulture);
-            int height = int.Parse(args[1], CultureInfo.InvariantCulture);
-            double xmin = double.Parse(args[2], CultureInfo.InvariantCulture);
-            double xmax = double.Parse(args[3], CultureInfo.InvariantCulture);
-            double ymin = double.Parse(args[4], CultureInfo.InvariantCulture);
-            double ymax = double.Parse(args[5], CultureInfo.InvariantCulture);
-            string output = args[6];
-
-            const int MaxIterations = 30;
-            const double ConvergenceThreshold = 0.5;
-            const double Epsilon = 0.0001f;
-            const double RootTolerance = 0.01;
-
-            var bmp = new Bitmap(width, height);
-
-            double xstep = (xmax - xmin) / width;
-            double ystep = (ymax - ymin) / height;
-
-            List<Complex> roots = new List<Complex>();
-
-            // TODO: poly should be parameterised?
-            Polynomial polynomial = new Polynomial();
-            polynomial.Coefficients.Add(new Complex(1, 0));
-            polynomial.Coefficients.Add(Complex.Zero);
-            polynomial.Coefficients.Add(Complex.Zero);
-            polynomial.Coefficients.Add(new Complex(1, 0));
-            Polynomial derivative = polynomial.Derive();
-
-
-
-            var colors = new Color[]
+            var config = FractalConfig.FromArgs(args);
+            if (!config.IsValid)
             {
-                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
-            };
-
-            // for every pixel in image...
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    var ox = FractalOperations.PixelToWorld(i, j, xmin, ymin, xstep, ystep, Epsilon);
-
-                    int it = FractalOperations.NewtonIterate(ref ox, polynomial, derivative, MaxIterations, ConvergenceThreshold);
-
-                    var id = FractalOperations.FindRootIndex(roots, ox, RootTolerance);
-
-                    var baseColor = colors[id % colors.Length];
-                    var shaded = FractalOperations.ShadeByIterations(baseColor, it);
-
-                    bmp.SetPixel(j, i, shaded);
-                }
+                Console.WriteLine("Usage: NNPTPZ1 <width> <height> <xmin> <xmax> <ymin> <ymax> [outputPath] [iterations] [shadingSpeed] [coeff0 coeff1 ...]");
+                return;
             }
 
-                    bmp.Save(output ?? "../../../out.png");
+            var polynomial = Mathematics.Polynomial.FromArgs(args);
+            var derivative = polynomial.Derive();
+
+            Bitmap bmp = FractalEngine.Generate(config, polynomial, derivative);
+            var outPath = config.OutputPath ?? "../../../out.png";
+            var fullPath = Path.GetFullPath(outPath);
+            bmp.Save(fullPath);
+            Console.WriteLine($"Fraktál uložen do: {fullPath}");
         }
 
     }

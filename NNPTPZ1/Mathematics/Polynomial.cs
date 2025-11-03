@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 
 namespace NNPTPZ1.Mathematics
 {
@@ -94,6 +95,29 @@ namespace NNPTPZ1.Mathematics
                     s += " + ";
             }
             return s;
+        }
+
+        public static Polynomial FromArgs(string[] args)
+        {
+            var poly = new Polynomial();
+
+            // no coefficients in args => default 1 + x^3
+            if (args == null || args.Length <= 9)
+            {
+                poly.Coefficients.Add(new Complex(1, 0));
+                poly.Coefficients.Add(Complex.Zero);
+                poly.Coefficients.Add(Complex.Zero);
+                poly.Coefficients.Add(new Complex(1, 0));
+                return poly;
+            }
+
+            for (int i = 9; i < args.Length; i++)
+            {
+                double real = double.Parse(args[i], CultureInfo.InvariantCulture);
+                poly.Coefficients.Add(new Complex(real, 0));
+            }
+
+            return poly;
         }
     }
 }

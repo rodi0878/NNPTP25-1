@@ -9,8 +9,8 @@ namespace NNPTPZ1
     {
         public static Complex PixelToWorld(int i, int j, double xmin, double ymin, double xstep, double ystep, double eps)
         {
-            double y = ymin + i * ystep;
-            double x = xmin + j * xstep;
+            double x = xmin + i * ystep;
+            double y = ymin + j * xstep;
             var ox = new Complex(x, y);
             if (ox.Real == 0) ox.Real = eps;
             if (ox.Imaginary == 0) ox.Imaginary = eps;
@@ -39,12 +39,13 @@ namespace NNPTPZ1
             return roots.Count;
         }
 
-        public static Color ShadeByIterations(Color baseColor, int it)
+        public static Color ShadeByIterations(Color baseColor, int it, int shadingSpeed)
         {
+            int shade = it * shadingSpeed;
             return Color.FromArgb(
-                Math.Min(Math.Max(0, baseColor.R - it * 2), 255),
-                Math.Min(Math.Max(0, baseColor.G - it * 2), 255),
-                Math.Min(Math.Max(0, baseColor.B - it * 2), 255)
+                Math.Min(Math.Max(0, baseColor.R - shade), 255),
+                Math.Min(Math.Max(0, baseColor.G - shade), 255),
+                Math.Min(Math.Max(0, baseColor.B - shade), 255)
             );
         }
 

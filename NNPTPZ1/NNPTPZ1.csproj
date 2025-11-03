@@ -44,6 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FractalConfig.cs" />
+    <Compile Include="FractalEngine.cs" />
     <Compile Include="FractalOperations.cs" />
     <Compile Include="Mathematics\Complex.cs" />
     <Compile Include="Mathematics\Polynomial.cs" />

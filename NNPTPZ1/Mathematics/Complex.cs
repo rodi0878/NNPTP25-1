@@ -13,7 +13,7 @@ namespace NNPTPZ1.Mathematics
         public Complex(double real, double imaginary)
         {
             Real = real;
-            Imaginary = (float)imaginary;
+            Imaginary = imaginary;
         }
 
         public double Abs()
