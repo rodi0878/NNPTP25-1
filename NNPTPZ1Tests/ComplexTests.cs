@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NNPTPZ1;
 
 namespace NNPTPZ1.Mathematics.Tests
 {
@@ -43,10 +42,10 @@ namespace NNPTPZ1.Mathematics.Tests
         [TestMethod()]
         public void AddTestPolynome()
         {
-            Polynomial poly = new Mathematics.Polynomial();
-            poly.Coefficient.Add(new Complex(1, 0));
-            poly.Coefficient.Add(new Complex(0, 0));
-            poly.Coefficient.Add(new Complex(1, 0));
+            Polynomial poly = new Polynomial();
+            poly.Coefficients.Add(new Complex(1, 0));
+            poly.Coefficients.Add(new Complex(0, 0));
+            poly.Coefficients.Add(new Complex(1, 0));
             Complex result = poly.Eval(new Complex(0, 0));
             var expected = new Complex(1, 0);
             Assert.AreEqual(expected, result);

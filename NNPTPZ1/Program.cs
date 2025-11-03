@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using NNPTPZ1.Mathematics;
 using System.Globalization;
@@ -25,7 +24,7 @@ namespace NNPTPZ1
 
             const int MaxIterations = 30;
             const double ConvergenceThreshold = 0.5;
-            const float Epsilon = 0.0001f;
+            const double Epsilon = 0.0001f;
             const double RootTolerance = 0.01;
 
             var bmp = new Bitmap(width, height);
@@ -37,10 +36,10 @@ namespace NNPTPZ1
 
             // TODO: poly should be parameterised?
             Polynomial polynomial = new Polynomial();
-            polynomial.Coefficient.Add(new Complex(1, 0));
-            polynomial.Coefficient.Add(Complex.Zero);
-            polynomial.Coefficient.Add(Complex.Zero);
-            polynomial.Coefficient.Add(new Complex(1, 0));
+            polynomial.Coefficients.Add(new Complex(1, 0));
+            polynomial.Coefficients.Add(Complex.Zero);
+            polynomial.Coefficients.Add(Complex.Zero);
+            polynomial.Coefficients.Add(new Complex(1, 0));
             Polynomial derivative = polynomial.Derive();
 
 

@@ -7,7 +7,7 @@ namespace NNPTPZ1
 {
     internal static class FractalOperations
     {
-        public static Complex PixelToWorld(int i, int j, double xmin, double ymin, double xstep, double ystep, float eps)
+        public static Complex PixelToWorld(int i, int j, double xmin, double ymin, double xstep, double ystep, double eps)
         {
             double y = ymin + i * ystep;
             double x = xmin + j * xstep;

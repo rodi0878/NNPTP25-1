@@ -6,7 +6,7 @@ namespace NNPTPZ1.Mathematics
     public class Complex
     {
         public double Real { get; set; }
-        public float Imaginary { get; set; }
+        public double Imaginary { get; set; }
 
         public static readonly Complex Zero = new Complex(0, 0);
 
@@ -16,7 +16,7 @@ namespace NNPTPZ1.Mathematics
             Imaginary = (float)imaginary;
         }
 
-        public double GetAbS()
+        public double Abs()
         {
             return Math.Sqrt(Real * Real + Imaginary * Imaginary);
         }

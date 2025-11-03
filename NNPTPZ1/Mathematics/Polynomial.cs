@@ -7,15 +7,15 @@ namespace NNPTPZ1.Mathematics
         /// <summary>
         /// Coe
         /// </summary>
-        public List<Complex> Coefficient { get; set; }
+        public List<Complex> Coefficients { get; set; }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public Polynomial() => Coefficient = new List<Complex>();
+        public Polynomial() => Coefficients = new List<Complex>();
 
-        public void Add(Complex coe) =>
-            Coefficient.Add(coe);
+        public void Add(Complex coefficient) =>
+            Coefficients.Add(coefficient);
 
         /// <summary>
         /// Derives this polynomial and creates new one
@@ -24,9 +24,9 @@ namespace NNPTPZ1.Mathematics
         public Polynomial Derive()
         {
             Polynomial polynomial = new Polynomial();
-            for (int q = 1; q < Coefficient.Count; q++)
+            for (int q = 1; q < Coefficients.Count; q++)
             {
-                polynomial.Coefficient.Add(Coefficient[q].Multiply(new Complex(q, 0)));
+                polynomial.Coefficients.Add(Coefficients[q].Multiply(new Complex(q, 0)));
             }
 
             return polynomial;
@@ -51,9 +51,9 @@ namespace NNPTPZ1.Mathematics
         public Complex Eval(Complex x)
         {
             Complex s = Complex.Zero;
-            for (int i = 0; i < Coefficient.Count; i++)
+            for (int i = 0; i < Coefficients.Count; i++)
             {
-                Complex coef = Coefficient[i];
+                Complex coef = Coefficients[i];
                 Complex bx = x;
                 int power = i;
 
@@ -79,9 +79,9 @@ namespace NNPTPZ1.Mathematics
         {
             string s = "";
             int i = 0;
-            for (; i < Coefficient.Count; i++)
+            for (; i < Coefficients.Count; i++)
             {
-                s += Coefficient[i];
+                s += Coefficients[i];
                 if (i > 0)
                 {
                     int j = 0;
@@ -90,7 +90,7 @@ namespace NNPTPZ1.Mathematics
                         s += "x";
                     }
                 }
-                if (i + 1 < Coefficient.Count)
+                if (i + 1 < Coefficients.Count)
                     s += " + ";
             }
             return s;
