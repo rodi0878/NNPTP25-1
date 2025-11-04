@@ -46,14 +46,14 @@ namespace NNPTPZ1
 
             List<ComplexNumber> koreny = new List<ComplexNumber>();
             // TODO: poly should be parameterised?
-            Poly p = new Poly();
-            p.Coe.Add(new ComplexNumber() { RealPart = 1 });
-            p.Coe.Add(ComplexNumber.ZeroValue);
-            p.Coe.Add(ComplexNumber.ZeroValue);
-            //p.Coe.Add(Cplx.Zero);
-            p.Coe.Add(new ComplexNumber() { RealPart = 1 });
-            Poly ptmp = p;
-            Poly pd = p.Derive();
+            Polynomial p = new Polynomial();
+            p.ListOfCoefficients.Add(new ComplexNumber() { RealPart = 1 });
+            p.ListOfCoefficients.Add(ComplexNumber.ZeroValue);
+            p.ListOfCoefficients.Add(ComplexNumber.ZeroValue);
+            //p.ListOfCoefficients.Add(Cplx.Zero);
+            p.ListOfCoefficients.Add(new ComplexNumber() { RealPart = 1 });
+            Polynomial ptmp = p;
+            Polynomial pd = p.Derive();
 
             Console.WriteLine(p);
             Console.WriteLine(pd);
@@ -92,7 +92,7 @@ namespace NNPTPZ1
                     float it = 0;
                     for (int q = 0; q < 30; q++)
                     {
-                        var diff = p.Eval(ox).Divide(pd.Eval(ox));
+                        var diff = p.EvaluateAtComplexPoint(ox).Divide(pd.EvaluateAtComplexPoint(ox));
                         ox = ox.Subtract(diff);
 
                         //Console.WriteLine($"{q} {ox} -({diff})");
