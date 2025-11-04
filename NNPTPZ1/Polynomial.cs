@@ -54,47 +54,43 @@ namespace NNPTPZ1
             ComplexNumber result = ComplexNumber.ZeroValue;
             for (int i = 0; i < ListOfCoefficients.Count; i++)
             {
-                ComplexNumber coefficiens = ListOfCoefficients[i];
-                ComplexNumber bx = complexPoint;
-                int power = i;
+                ComplexNumber coefficient = ListOfCoefficients[i];
+                // xPower accumulates complexPoint^i (x to the power i).
+                // It is initialized to 1 (the multiplicative identity) so that
+                // the inner loop multiplies complexPoint i times to produce x^i.
+                ComplexNumber xPower = new ComplexNumber { RealPart = 1, ImaginaryPart = 0 };
+                for (int j = 0; j < i; j++)
+                    xPower = xPower.Multiply(complexPoint);
 
-                if (i > 0)
-                {
-                    for (int j = 0; j < power - 1; j++)
-                        bx = bx.Multiply(complexPoint);
-
-                    coefficiens = coefficiens.Multiply(bx);
-                }
-
-                result = result.Add(coefficiens);
+                ComplexNumber term = coefficient.Multiply(xPower);
+                result = result.Add(term);
             }
-
             return result;
         }
 
         /// <summary>
         /// ToString
         /// </summary>
-        /// <returns>String repr of polynomial</returns>
+        /// <returns>String representation of polynomial</returns>
         public override string ToString()
         {
-            string s = "";
+            var stringBuilder = new StringBuilder();
             int i = 0;
             for (; i < ListOfCoefficients.Count; i++)
             {
-                s += ListOfCoefficients[i];
+                stringBuilder.Append(ListOfCoefficients[i].ToString());
                 if (i > 0)
                 {
                     int j = 0;
                     for (; j < i; j++)
                     {
-                        s += "x";
+                        stringBuilder.Append("x");
                     }
                 }
                 if (i + 1 < ListOfCoefficients.Count)
-                    s += " + ";
+                    stringBuilder.Append(" + ");
             }
-            return s;
+            return stringBuilder.ToString();
         }
     }
 }
