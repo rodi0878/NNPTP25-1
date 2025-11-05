@@ -36,6 +36,7 @@ namespace NNPTPZ1.Mathematics.Tests
             Assert.AreEqual("(0 + 0i)", b.ToString());
         }
 
+
         [TestMethod]
         public void AddTestPolynome()
         {
