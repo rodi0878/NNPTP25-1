@@ -1,37 +1,31 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NNPTPZ1.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NNPTPZ1;
+﻿﻿using Mathematics;
+ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace NNPTPZ1.Mathematics.Tests
+ namespace NNPTPZ1
 {
-    [TestClass()]
-    public class CplxTests
+    [TestClass]
+    public class ComplexNumberTests
     {
 
-        [TestMethod()]
+        [TestMethod]
         public void AddTest()
         {
-            Cplx a = new Cplx()
+            ComplexNumber a = new ComplexNumber()
             {
-                Re = 10,
-                Imaginari = 20
+                Real = 10,
+                Imaginary = 20
             };
-            Cplx b = new Cplx()
+            ComplexNumber b = new ComplexNumber()
             {
-                Re = 1,
-                Imaginari = 2
+                Real = 1,
+                Imaginary = 2
             };
 
-            Cplx actual = a.Add(b);
-            Cplx shouldBe = new Cplx()
+            ComplexNumber actual = a.Add(b);
+            ComplexNumber shouldBe = new ComplexNumber()
             {
-                Re = 11,
-                Imaginari = 22
+                Real = 11,
+                Imaginary = 22
             };
 
             Assert.AreEqual(shouldBe, actual);
@@ -43,13 +37,13 @@ namespace NNPTPZ1.Mathematics.Tests
             r2 = b.ToString();
             Assert.AreEqual(e2, r2);
 
-            a = new Cplx()
+            a = new ComplexNumber()
             {
-                Re = 1,
-                Imaginari = -1
+                Real = 1,
+                Imaginary = -1
             };
-            b = new Cplx() { Re = 0, Imaginari = 0 };
-            shouldBe = new Cplx() { Re = 1, Imaginari = -1 };
+            b = new ComplexNumber() { Real = 0, Imaginary = 0 };
+            shouldBe = new ComplexNumber() { Real = 1, Imaginary = -1 };
             actual = a.Add(b);
             Assert.AreEqual(shouldBe, actual);
 
@@ -62,28 +56,26 @@ namespace NNPTPZ1.Mathematics.Tests
             Assert.AreEqual(e2, r2);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void AddTestPolynome()
         {
-            Poly poly = new Mathematics.Poly();
-            poly.Coe.Add(new Cplx() { Re = 1, Imaginari = 0 });
-            poly.Coe.Add(new Cplx() { Re = 0, Imaginari = 0 });
-            poly.Coe.Add(new Cplx() { Re = 1, Imaginari = 0 });
-            Cplx result = poly.Eval(new Cplx() { Re = 0, Imaginari = 0 });
-            var expected = new Cplx() { Re = 1, Imaginari = 0 };
+            Polynomial polynomial = new global::Mathematics.Polynomial();
+            polynomial.Coefficients.Add(new ComplexNumber() { Real = 1, Imaginary = 0 });
+            polynomial.Coefficients.Add(new ComplexNumber() { Real = 0, Imaginary = 0 });
+            polynomial.Coefficients.Add(new ComplexNumber() { Real = 1, Imaginary = 0 });
+            ComplexNumber result = polynomial.Eval(new ComplexNumber() { Real = 0, Imaginary = 0 });
+            var expected = new ComplexNumber() { Real = 1, Imaginary = 0 };
             Assert.AreEqual(expected, result);
-            result = poly.Eval(new Cplx() { Re = 1, Imaginari = 0 });
-            expected = new Cplx() { Re = 2, Imaginari = 0 };
+            result = polynomial.Eval(new ComplexNumber() { Real = 1, Imaginary = 0 });
+            expected = new ComplexNumber() { Real = 2, Imaginary = 0 };
             Assert.AreEqual(expected, result);
-            result = poly.Eval(new Cplx() { Re = 2, Imaginari = 0 });
-            expected = new Cplx() { Re = 5.0000000000, Imaginari = 0 };
+            result = polynomial.Eval(new ComplexNumber() { Real = 2, Imaginary = 0 });
+            expected = new ComplexNumber() { Real = 5.0000000000, Imaginary = 0 };
             Assert.AreEqual(expected, result);
 
-            var r2 = poly.ToString();
+            var r2 = polynomial.ToString();
             var e2 = "(1 + 0i) + (0 + 0i)x + (1 + 0i)xx";
             Assert.AreEqual(e2, r2);
         }
     }
 }
-
-
