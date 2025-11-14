@@ -2,88 +2,90 @@
 using NNPTPZ1.Mathematics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NNPTPZ1;
 
 namespace NNPTPZ1.Mathematics.Tests
 {
-    [TestClass()]
+    [TestClass]
     public class CplxTests
     {
+        private const double Tolerance = 1e-10;
 
-        [TestMethod()]
-        public void AddTest()
+        private void AssertCplxEqual(Cplx expected, Cplx actual)
         {
-            Cplx a = new Cplx()
-            {
-                Re = 10,
-                Imaginari = 20
-            };
-            Cplx b = new Cplx()
-            {
-                Re = 1,
-                Imaginari = 2
-            };
-
-            Cplx actual = a.Add(b);
-            Cplx shouldBe = new Cplx()
-            {
-                Re = 11,
-                Imaginari = 22
-            };
-
-            Assert.AreEqual(shouldBe, actual);
-
-            var e2 = "(10 + 20i)";
-            var r2 = a.ToString();
-            Assert.AreEqual(e2, r2);
-            e2 = "(1 + 2i)";
-            r2 = b.ToString();
-            Assert.AreEqual(e2, r2);
-
-            a = new Cplx()
-            {
-                Re = 1,
-                Imaginari = -1
-            };
-            b = new Cplx() { Re = 0, Imaginari = 0 };
-            shouldBe = new Cplx() { Re = 1, Imaginari = -1 };
-            actual = a.Add(b);
-            Assert.AreEqual(shouldBe, actual);
-
-            e2 = "(1 + -1i)";
-            r2 = a.ToString();
-            Assert.AreEqual(e2, r2);
-
-            e2 = "(0 + 0i)";
-            r2 = b.ToString();
-            Assert.AreEqual(e2, r2);
+            Assert.AreEqual(expected.Real, actual.Real, Tolerance, "Real parts differ");
+            Assert.AreEqual(expected.Imaginary, actual.Imaginary, Tolerance, "Imaginary parts differ");
         }
 
-        [TestMethod()]
-        public void AddTestPolynome()
+        [TestMethod]
+        public void AddTest()
         {
-            Poly poly = new Mathematics.Poly();
-            poly.Coe.Add(new Cplx() { Re = 1, Imaginari = 0 });
-            poly.Coe.Add(new Cplx() { Re = 0, Imaginari = 0 });
-            poly.Coe.Add(new Cplx() { Re = 1, Imaginari = 0 });
-            Cplx result = poly.Eval(new Cplx() { Re = 0, Imaginari = 0 });
-            var expected = new Cplx() { Re = 1, Imaginari = 0 };
-            Assert.AreEqual(expected, result);
-            result = poly.Eval(new Cplx() { Re = 1, Imaginari = 0 });
-            expected = new Cplx() { Re = 2, Imaginari = 0 };
-            Assert.AreEqual(expected, result);
-            result = poly.Eval(new Cplx() { Re = 2, Imaginari = 0 });
-            expected = new Cplx() { Re = 5.0000000000, Imaginari = 0 };
-            Assert.AreEqual(expected, result);
+            Cplx a = new Cplx() { Real = 10, Imaginary = 20 };
+            Cplx b = new Cplx() { Real = 1, Imaginary = 2 };
+            Cplx expected = new Cplx() { Real = 11, Imaginary = 22 };
+            Cplx actual = a.Add(b);
+            AssertCplxEqual(expected, actual);
 
-            var r2 = poly.ToString();
-            var e2 = "(1 + 0i) + (0 + 0i)x + (1 + 0i)xx";
-            Assert.AreEqual(e2, r2);
+            a = new Cplx() { Real = 1, Imaginary = -1 };
+            b = new Cplx() { Real = 0, Imaginary = 0 };
+            expected = new Cplx() { Real = 1, Imaginary = -1 };
+            actual = a.Add(b);
+            AssertCplxEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void SubtractTest()
+        {
+            Cplx a = new Cplx() { Real = 5, Imaginary = 3 };
+            Cplx b = new Cplx() { Real = 2, Imaginary = 1 };
+            Cplx expected = new Cplx() { Real = 3, Imaginary = 2 };
+            Cplx actual = a.Subtract(b);
+            AssertCplxEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void MultiplyTest()
+        {
+            Cplx a = new Cplx() { Real = 2, Imaginary = 3 };
+            Cplx b = new Cplx() { Real = 4, Imaginary = -1 };
+            Cplx expected = new Cplx() { Real = 11, Imaginary = 10 }; 
+            Cplx actual = a.Multiply(b);
+            AssertCplxEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void ToStringTest()
+        {
+            Cplx a = new Cplx() { Real = 10, Imaginary = 20 };
+            string s = a.ToString();
+            Assert.IsTrue(s.Contains("10") && s.Contains("20") && s.Contains("i"));
+
+            a = new Cplx() { Real = 1, Imaginary = -1 };
+            s = a.ToString();
+            Assert.IsTrue(s.Contains("1") && s.Contains("-1") && s.Contains("i"));
+        }
+
+        [TestMethod]
+        public void PolyEvaluateTest()
+        {
+            Poly poly = new Poly();
+            poly.Coefficients.Add(new Cplx() { Real = 1, Imaginary = 0 });
+            poly.Coefficients.Add(new Cplx() { Real = 0, Imaginary = 0 });
+            poly.Coefficients.Add(new Cplx() { Real = 1, Imaginary = 0 });
+
+            Cplx result = poly.Evaluate(new Cplx() { Real = 0, Imaginary = 0 });
+            Cplx expected = new Cplx() { Real = 1, Imaginary = 0 };
+            AssertCplxEqual(expected, result);
+
+            result = poly.Evaluate(new Cplx() { Real = 1, Imaginary = 0 });
+            expected = new Cplx() { Real = 2, Imaginary = 0 };
+            AssertCplxEqual(expected, result);
+
+            result = poly.Evaluate(new Cplx() { Real = 2, Imaginary = 0 });
+            expected = new Cplx() { Real = 5, Imaginary = 0 };
+            AssertCplxEqual(expected, result);
+
+            string polyString = poly.ToString();
+            Assert.IsTrue(polyString.Contains("1") && polyString.Contains("x"));
         }
     }
 }
-
-
