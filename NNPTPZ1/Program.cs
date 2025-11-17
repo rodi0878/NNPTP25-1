@@ -1,153 +1,188 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using System.Drawing;
-using System.Drawing.Design;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing.Printing;
-using System.Drawing.Text;
-using System.Linq.Expressions;
-using System.Threading;
 
 namespace NNPTPZ1
 {
     /// <summary>
-    /// This program should produce Newton fractals.
+    /// Produces Newton fractals.
     /// See more at: https://en.wikipedia.org/wiki/Newton_fractal
     /// </summary>
     class Program
     {
+        private const int DefaultMaxIterations = 30;
+        private const double DefaulPolynomialValue = 1.0;
+        private const double ZeroValue = 0.0;
+        private const double DefaultConvergenceTolerance = 1e-6;
+        private const double DefaultRootMergeDistanceSquared = 0.01;
+        private const double SmallInitialValue = 1e-4;
+
+        private static readonly Color[] ColorPalette =
+        {
+            Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
+        };
+
         static void Main(string[] args)
         {
-            int[] intargs = new int[2];
-            for (int i = 0; i < intargs.Length; i++)
+            if (!TryParseArguments(args, out InputArguments inputArguments))
             {
-                intargs[i] = int.Parse(args[i]);
+                Console.WriteLine("Usage: <PixelWidth> <PixelHeight> <realNumberMin> <realNumberMax> <imagNumberMin> <imagNumberMax> <outputPath>");
+                return;
             }
-            double[] doubleargs = new double[4];
-            for (int i = 0; i < doubleargs.Length; i++)
+
+            using (var bitmap = new Bitmap(inputArguments.PixelWidth, inputArguments.PixelHeight))
             {
-                doubleargs[i] = double.Parse(args[i + 2]);
+                RenderNewtonFractal(bitmap, inputArguments);
+                bitmap.Save(inputArguments.OutputPath ?? "../../../out.png");
             }
-            string output = args[6];
-            // TODO: add parameters from args?
-            Bitmap bmp = new Bitmap(intargs[0], intargs[1]);
-            double xmin = doubleargs[0];
-            double xmax = doubleargs[1];
-            double ymin = doubleargs[2];
-            double ymax = doubleargs[3];
+        }
 
-            double xstep = (xmax - xmin) / intargs[0];
-            double ystep = (ymax - ymin) / intargs[1];
 
-            List<ComplexNumber> koreny = new List<ComplexNumber>();
-            // TODO: poly should be parameterised?
-            Polynomial p = new Polynomial();
-            p.ListOfCoefficients.Add(new ComplexNumber() { RealPart = 1 });
-            p.ListOfCoefficients.Add(ComplexNumber.ZeroValue);
-            p.ListOfCoefficients.Add(ComplexNumber.ZeroValue);
-            //p.ListOfCoefficients.Add(Cplx.Zero);
-            p.ListOfCoefficients.Add(new ComplexNumber() { RealPart = 1 });
-            Polynomial ptmp = p;
-            Polynomial pd = p.Derive();
+        /// <summary>
+        /// Parses command-line arguments into an InputArguments object.
+        /// </summary>
+        private static bool TryParseArguments(string[] args, out InputArguments inputArguments)
+        {
+            inputArguments = null;
+            if (args == null || args.Length < 7)
+                return false;
 
-            Console.WriteLine(p);
-            Console.WriteLine(pd);
+            if (!int.TryParse(args[0], out int PixelWidth)) return false;
+            if (!int.TryParse(args[1], out int PixelHeight)) return false;
+            if (!double.TryParse(args[2], out double RealNumberMinimum)) return false;
+            if (!double.TryParse(args[3], out double RealNumberMaximum)) return false;
+            if (!double.TryParse(args[4], out double ImaginaryNumberMinimum)) return false;
+            if (!double.TryParse(args[5], out double ImaginaryNumberMaximum)) return false;
+            string OutputPath = args[6];
 
-            var clrs = new Color[]
+            inputArguments = new InputArguments
             {
-                Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Orange, Color.Fuchsia, Color.Gold, Color.Cyan, Color.Magenta
+                PixelWidth = PixelWidth,
+                PixelHeight = PixelHeight,
+                RealNumberMinimum = RealNumberMinimum,
+                RealNumberMaximum = RealNumberMaximum,
+                ImaginaryNumberMinimum = ImaginaryNumberMinimum,
+                ImaginaryNumberMaximum = ImaginaryNumberMaximum,
+                OutputPath = OutputPath,
             };
+            return true;
+        }
 
-            var maxid = 0;
 
-            // TODO: cleanup!!!
-            // for every pixel in image...
-            for (int i = 0; i < intargs[0]; i++)
+        /// <summary>
+        /// Renders a Newton fractal into the provided bitmap using given input arguments.
+        /// </summary>
+        private static void RenderNewtonFractal(Bitmap bitmap, InputArguments inputArguments)
+        {
+            double pixelWidth = (inputArguments.RealNumberMaximum - inputArguments.RealNumberMinimum) / inputArguments.PixelWidth;
+            double pixelHeight = (inputArguments.ImaginaryNumberMaximum - inputArguments.ImaginaryNumberMinimum) / inputArguments.PixelHeight;
+
+            var polynomial = CreateDefaultPolynomial();
+            var derivative = polynomial.Derive();
+
+            var roots = new List<ComplexNumber>();
+
+            for (int row = 0; row < inputArguments.PixelHeight; row++)
             {
-                for (int j = 0; j < intargs[1]; j++)
+                double imaginaryPart = inputArguments.ImaginaryNumberMinimum + row * pixelHeight;
+
+                for (int collumn = 0; collumn < inputArguments.PixelWidth; collumn++)
                 {
-                    // find "world" coordinates of pixel
-                    double y = ymin + i * ystep;
-                    double x = xmin + j * xstep;
+                    double realPart = inputArguments.RealNumberMinimum + collumn * pixelWidth;
+                    var initialValue = CreateInitialComplexValue(realPart, imaginaryPart);
 
-                    ComplexNumber ox = new ComplexNumber()
-                    {
-                        RealPart = x,
-                        ImaginaryPart = (float)(y)
-                    };
+                    int iterationCount = PerformNewtonIteration(initialValue, polynomial, derivative, DefaultMaxIterations, DefaultConvergenceTolerance, out ComplexNumber convergedValue);
 
-                    if (ox.RealPart == 0)
-                        ox.RealPart = 0.0001;
-                    if (ox.ImaginaryPart == 0)
-                        ox.ImaginaryPart = 0.0001f;
+                    int rootPosition = FindOrAddRoot(roots, convergedValue, DefaultRootMergeDistanceSquared);
 
-                    //Console.WriteLine(ox);
+                    var baseColor = ColorPalette[rootPosition % ColorPalette.Length];
+                    var pixelColor = ShadeColor(baseColor, iterationCount);
+                    bitmap.SetPixel(collumn, row, pixelColor);
+                }
+            }
+        }
 
-                    // find solution of equation using newton's iteration
-                    float it = 0;
-                    for (int q = 0; q < 30; q++)
-                    {
-                        var diff = p.EvaluateAtComplexPoint(ox).Divide(pd.EvaluateAtComplexPoint(ox));
-                        ox = ox.Subtract(diff);
 
-                        //Console.WriteLine($"{q} {ox} -({diff})");
-                        if (Math.Pow(diff.RealPart, 2) + Math.Pow(diff.ImaginaryPart, 2) >= 0.5)
-                        {
-                            q--;
-                        }
-                        it++;
-                    }
+        private static Polynomial CreateDefaultPolynomial()
+        {
+            var polynomial = new Polynomial();
+            polynomial.ListOfCoefficients.Add(new ComplexNumber { RealPart = DefaulPolynomialValue });
+            polynomial.ListOfCoefficients.Add(ComplexNumber.ZeroValue);
+            polynomial.ListOfCoefficients.Add(ComplexNumber.ZeroValue);
+            polynomial.ListOfCoefficients.Add(new ComplexNumber { RealPart = DefaulPolynomialValue });
+            return polynomial;
+        }
 
-                    //Console.ReadKey();
 
-                    // find solution root number
-                    var known = false;
-                    var id = 0;
-                    for (int w = 0; w < koreny.Count; w++)
-                    {
-                        if (Math.Pow(ox.RealPart - koreny[w].RealPart, 2) + Math.Pow(ox.ImaginaryPart - koreny[w].ImaginaryPart, 2) <= 0.01)
-                        {
-                            known = true;
-                            id = w;
-                        }
-                    }
-                    if (!known)
-                    {
-                        koreny.Add(ox);
-                        id = koreny.Count;
-                        maxid = id + 1;
-                    }
+        private static ComplexNumber CreateInitialComplexValue(double realPart, double imaginaryPart)
+        {
+            return new ComplexNumber
+            {
+                RealPart = (realPart == ZeroValue) ? SmallInitialValue : realPart,
+                ImaginaryPart = (imaginaryPart == ZeroValue) ? SmallInitialValue : imaginaryPart
+            };
+        }
 
-                    // colorize pixel according to root number
-                    //int vv = id;
-                    //int vv = id * 50 + (int)it*5;
-                    var vv = clrs[id % clrs.Length];
-                    vv = Color.FromArgb(vv.R, vv.G, vv.B);
-                    vv = Color.FromArgb(Math.Min(Math.Max(0, vv.R - (int)it * 2), 255), Math.Min(Math.Max(0, vv.G - (int)it * 2), 255), Math.Min(Math.Max(0, vv.B - (int)it * 2), 255));
-                    //vv = Math.Min(Math.Max(0, vv), 255);
-                    bmp.SetPixel(j, i, vv);
-                    //bmp.SetPixel(j, i, Color.FromArgb(vv, vv, vv));
+
+        /// <summary>
+        /// Performs Newton-Raphson iteration for a complex polynomial.
+        /// </summary>
+        private static int PerformNewtonIteration(ComplexNumber startingPoint, Polynomial polynomial, Polynomial polynomialDerivative, int maxIterations, double convergenceTolerance, out ComplexNumber convergedValue)
+        {
+            var currentEstimate = new ComplexNumber { RealPart = startingPoint.RealPart, ImaginaryPart = startingPoint.ImaginaryPart };
+
+
+            for (int i = 0; i < maxIterations; i++)
+            {
+                var functionValue = polynomial.EvaluateAtComplexPoint(currentEstimate);
+                var derivativeValue = polynomialDerivative.EvaluateAtComplexPoint(currentEstimate);
+
+                if (derivativeValue.RealPart == 0 && derivativeValue.ImaginaryPart == 0)
+                    break;
+
+                var correctionStep = functionValue.Divide(derivativeValue);
+                currentEstimate = currentEstimate.Subtract(correctionStep);
+
+                if (correctionStep.GetAbsoluteValue() < convergenceTolerance)
+                {
+                    convergedValue = currentEstimate;
+                    return i + 1;
                 }
             }
 
-            // TODO: delete I suppose...
-            //for (int i = 0; i < 300; i++)
-            //{
-            //    for (int j = 0; j < 300; j++)
-            //    {
-            //        Color c = bmp.GetPixel(j, i);
-            //        int nv = (int)Math.Floor(c.R * (255.0 / maxid));
-            //        bmp.SetPixel(j, i, Color.FromArgb(nv, nv, nv));
-            //    }
-            //}
+            convergedValue = currentEstimate;
+            return maxIterations;
+        }
 
-            bmp.Save(output ?? "../../../out.png");
-            //Console.ReadKey();
+
+        /// <summary>
+        /// Finds an existing root within a merge distance or adds a new one.
+        /// </summary
+        private static int FindOrAddRoot(List<ComplexNumber> roots, ComplexNumber candidate, double mergeDistSquared)
+        {
+            for (int i = 0; i < roots.Count; i++)
+            {
+                double realDifference = candidate.RealPart - roots[i].RealPart;
+                double imaginaryDifference = candidate.ImaginaryPart - roots[i].ImaginaryPart;
+                if (realDifference * realDifference + imaginaryDifference * imaginaryDifference <= mergeDistSquared)
+                    return i;
+            }
+
+            roots.Add(candidate);
+            return roots.Count - 1;
+        }
+
+
+        /// <summary>
+        /// Shades a base color based on the number of iterations.
+        /// </summary>
+        private static Color ShadeColor(Color baseColor, int iterationCount)
+        {
+            int shadeAdjustment = iterationCount * 2;
+            int adjustedRed = Math.Min(Math.Max(0, baseColor.R - shadeAdjustment), 255);
+            int adjustedGreen = Math.Min(Math.Max(0, baseColor.G - shadeAdjustment), 255);
+            int adjustedBlue = Math.Min(Math.Max(0, baseColor.B - shadeAdjustment), 255);
+            return Color.FromArgb(adjustedRed, adjustedGreen, adjustedBlue);
         }
     }
 }
