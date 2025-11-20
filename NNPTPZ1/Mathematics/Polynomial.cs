@@ -1,39 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace NNPTPZ1.Mathematics
 {
-    public class Poly
+    public class Polynomial
     {
-        public List<Cplx> Coefficients { get; set; }
+        public List<Complex> Coefficients { get; set; }
 
-        public Poly() => Coefficients = new List<Cplx>();
+        public Polynomial() => Coefficients = new List<Complex>();
 
-        public void Add(Cplx coe) =>
+        public void Add(Complex coe) =>
             Coefficients.Add(coe);
 
-        public Poly Derive()
+        public Polynomial Derive()
         {
-            Poly derivative = new Poly();
+            Polynomial derivative = new Polynomial();
             for (int i = 1; i < Coefficients.Count; i++)
             {
-                derivative.Coefficients.Add(Coefficients[i].Multiply(new Cplx() { Real = i }));
+                derivative.Coefficients.Add(Coefficients[i].Multiply(new Complex() { Real = i }));
             }
 
             return derivative;
         }
 
-        public Cplx Evaluate(double x)
+        public Complex Evaluate(double x)
         {
-            return Evaluate(new Cplx() { Real = x, Imaginary = 0 });
+            return Evaluate(new Complex() { Real = x, Imaginary = 0 });
         }
 
-        public Cplx Evaluate(Cplx x)
+        public Complex Evaluate(Complex x)
         {
-            Cplx result = Cplx.Zero;
+            Complex result = Complex.Zero;
 
             for (int i = Coefficients.Count - 1; i >= 0; i--)
             {

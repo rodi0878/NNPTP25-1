@@ -44,8 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Mathematics\Cplx.cs" />
-    <Compile Include="Mathematics\Poly.cs" />
+    <Compile Include="Fractals\FractalGenerator.cs" />
+    <Compile Include="Fractals\FractalSettings.cs" />
+    <Compile Include="Imagesaver.cs" />
+    <Compile Include="Mathematics\Complex.cs" />
+    <Compile Include="Mathematics\Polynomial.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
