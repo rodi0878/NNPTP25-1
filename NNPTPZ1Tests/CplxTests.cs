@@ -1,89 +1,93 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NNPTPZ1.Mathematics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NNPTPZ1;
 
 namespace NNPTPZ1.Mathematics.Tests
 {
-    [TestClass()]
-    public class CplxTests
+    [TestClass]
+    public class ComplexNumberTests
     {
-
-        [TestMethod()]
+        [TestMethod]
         public void AddTest()
         {
-            Cplx a = new Cplx()
+            ComplexNumber a = new ComplexNumber
             {
-                Re = 10,
-                Imaginari = 20
+                Real = 10,
+                Imaginary = 20
             };
-            Cplx b = new Cplx()
+            ComplexNumber b = new ComplexNumber
             {
-                Re = 1,
-                Imaginari = 2
-            };
-
-            Cplx actual = a.Add(b);
-            Cplx shouldBe = new Cplx()
-            {
-                Re = 11,
-                Imaginari = 22
+                Real = 1,
+                Imaginary = 2
             };
 
-            Assert.AreEqual(shouldBe, actual);
-
-            var e2 = "(10 + 20i)";
-            var r2 = a.ToString();
-            Assert.AreEqual(e2, r2);
-            e2 = "(1 + 2i)";
-            r2 = b.ToString();
-            Assert.AreEqual(e2, r2);
-
-            a = new Cplx()
+            ComplexNumber actual = a.Add(b);
+            ComplexNumber expected = new ComplexNumber
             {
-                Re = 1,
-                Imaginari = -1
+                Real = 11,
+                Imaginary = 22
             };
-            b = new Cplx() { Re = 0, Imaginari = 0 };
-            shouldBe = new Cplx() { Re = 1, Imaginari = -1 };
+
+            Assert.AreEqual(expected, actual);
+
+            string expectedString = "(10 + 20i)";
+            string actualString = a.ToString();
+            Assert.AreEqual(expectedString, actualString);
+
+            expectedString = "(1 + 2i)";
+            actualString = b.ToString();
+            Assert.AreEqual(expectedString, actualString);
+
+            a = new ComplexNumber
+            {
+                Real = 1,
+                Imaginary = -1
+            };
+            b = new ComplexNumber
+            {
+                Real = 0,
+                Imaginary = 0
+            };
+            expected = new ComplexNumber
+            {
+                Real = 1,
+                Imaginary = -1
+            };
             actual = a.Add(b);
-            Assert.AreEqual(shouldBe, actual);
+            Assert.AreEqual(expected, actual);
 
-            e2 = "(1 + -1i)";
-            r2 = a.ToString();
-            Assert.AreEqual(e2, r2);
+            expectedString = "(1 + -1i)";
+            actualString = a.ToString();
+            Assert.AreEqual(expectedString, actualString);
 
-            e2 = "(0 + 0i)";
-            r2 = b.ToString();
-            Assert.AreEqual(e2, r2);
+            expectedString = "(0 + 0i)";
+            actualString = b.ToString();
+            Assert.AreEqual(expectedString, actualString);
         }
 
-        [TestMethod()]
-        public void AddTestPolynome()
+        [TestMethod]
+        public void AddTestPolynomial()
         {
-            Poly poly = new Mathematics.Poly();
-            poly.Coe.Add(new Cplx() { Re = 1, Imaginari = 0 });
-            poly.Coe.Add(new Cplx() { Re = 0, Imaginari = 0 });
-            poly.Coe.Add(new Cplx() { Re = 1, Imaginari = 0 });
-            Cplx result = poly.Eval(new Cplx() { Re = 0, Imaginari = 0 });
-            var expected = new Cplx() { Re = 1, Imaginari = 0 };
-            Assert.AreEqual(expected, result);
-            result = poly.Eval(new Cplx() { Re = 1, Imaginari = 0 });
-            expected = new Cplx() { Re = 2, Imaginari = 0 };
-            Assert.AreEqual(expected, result);
-            result = poly.Eval(new Cplx() { Re = 2, Imaginari = 0 });
-            expected = new Cplx() { Re = 5.0000000000, Imaginari = 0 };
+            Polynomial polynomial = new Polynomial();
+            polynomial.Coefficients.Add(new ComplexNumber { Real = 1, Imaginary = 0 });
+            polynomial.Coefficients.Add(new ComplexNumber { Real = 0, Imaginary = 0 });
+            polynomial.Coefficients.Add(new ComplexNumber { Real = 1, Imaginary = 0 });
+
+            ComplexNumber result = polynomial.Evaluate(new ComplexNumber { Real = 0, Imaginary = 0 });
+            ComplexNumber expected = new ComplexNumber { Real = 1, Imaginary = 0 };
             Assert.AreEqual(expected, result);
 
-            var r2 = poly.ToString();
-            var e2 = "(1 + 0i) + (0 + 0i)x + (1 + 0i)xx";
-            Assert.AreEqual(e2, r2);
+            result = polynomial.Evaluate(new ComplexNumber { Real = 1, Imaginary = 0 });
+            expected = new ComplexNumber { Real = 2, Imaginary = 0 };
+            Assert.AreEqual(expected, result);
+
+            result = polynomial.Evaluate(new ComplexNumber { Real = 2, Imaginary = 0 });
+            expected = new ComplexNumber { Real = 5.0000000000, Imaginary = 0 };
+            Assert.AreEqual(expected, result);
+
+            string expectedPolynomialString = "(1 + 0i) + (0 + 0i)x + (1 + 0i)xx";
+            string actualPolynomialString = polynomial.ToString();
+            Assert.AreEqual(expectedPolynomialString, actualPolynomialString);
         }
     }
 }
-
-
