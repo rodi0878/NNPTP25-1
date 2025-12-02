@@ -17,7 +17,7 @@ namespace NNPTPZ1.Mathematics
         {
             if (obj is ComplexNumber other)
             {
-                return other.Real == Real && other.Im == Im;
+                return other.Real == Real && other.Imaginary == Imaginary;
             }
             return false;
         }
