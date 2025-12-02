@@ -107,8 +107,8 @@ namespace NNPTPZ1
         {
             for (int i = 0; i < roots.Count; i++)
             {
-                if ((root.Real - roots[i].Real) * (root.Re - roots[i].Real) +
-                    (root.Im - roots[i].Im) * (root.Im - roots[i].Im) <= ROOT_TOLERANCE)
+                if ((root.Real - roots[i].Real) * (root.Real - roots[i].Real) +
+                    (root.Imaginary - roots[i].Imaginary) * (root.Imaginary - roots[i].Imaginary) <= ROOT_TOLERANCE)
                 {
                     return i;
                 }
