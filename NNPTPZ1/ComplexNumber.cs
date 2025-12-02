@@ -10,7 +10,7 @@ namespace NNPTPZ1.Mathematics
         public static readonly ComplexNumber Zero = new ComplexNumber
         {
             Real = 0,
-            Im = 0
+            Imaginary = 0
         };
 
         public override bool Equals(object obj)
