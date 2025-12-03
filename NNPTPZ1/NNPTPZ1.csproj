@@ -44,6 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandLineArgumentsParser.cs" />
+    <Compile Include="Complex.cs" />
+    <Compile Include="NewtonFractalGenerator.cs" />
+    <Compile Include="NewtonFractalParameters.cs" />
+    <Compile Include="Polynomial.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
